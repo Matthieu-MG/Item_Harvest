@@ -6,12 +6,16 @@ from werkzeug.security import generate_password_hash, check_password_hash
 
 app = Flask("__name__")
 
+# Setting up database in app.py
 db = SQL("sqlite:///webApp.db")
 
 # Configure session to use filesystem (instead of signed cookies)
 app.config["SESSION_PERMANENT"] = False
 app.config["SESSION_TYPE"] = "filesystem"
 Session(app)
+
+app.config["TEMPLATES_AUTO_RELOAD"] = True
+app.config["SEND_FILE_MAX_AGE_DEFAULT"] = 0
 
 @app.after_request
 def after_request(response):
@@ -38,7 +42,10 @@ def searchResults():
         if not query:
             print("Query is void")
 
-        return redirect("/")
+        s_results = []
+        #s_results = db.execute("SELECT * FROM inventory WHERE item_name LIKE ?", "%" + query + "%")
+
+        return render_template("results.html", s_results=s_results)
     
     else:
         return render_template("results.html")

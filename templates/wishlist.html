@@ -5,22 +5,28 @@
 {% endblock %}
 
 {% block main %}
-    <table class="table table-striped">
-        <thead>
-            <tr>
-                <th>Item Name</th>
-                <th>Price</th>
-                <th>Retailer</th>
-                <th>Link</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for item in user_wishlist %}
-                <tr>{{ item.name }}</tr>
-                <tr>{{ item.price }}</tr>
-                <tr>{{ item.retailer }}</tr>
-                <tr>{{ item.link }}</tr>
-            {% endfor %}
-        </tbody>
-    </table>
+    <div class="table-responsive-sm">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th >Item Name</th>
+                    <th >Price</th>
+                    <th >Retailer</th>
+                    <th >Link</th>
+                    <th >Remove</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in user_wishlist %}
+                <tr>
+                    <td>{{ item.name }}</td>
+                    <td>{{ item.price }}</td>
+                    <td>{{ item.retailer }}</td>
+                    <td>{{ item.link }}</td>
+                    <td>X</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
 {% endblock %}

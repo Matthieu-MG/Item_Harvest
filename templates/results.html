@@ -1,0 +1,32 @@
+{% extends 'layout.html' %}
+
+{% block title %}
+    Results
+{% endblock %}
+
+{% block main %}
+    <div class="table-responsive-sm">
+        <table class="table">
+            <thead class="table-warning">
+                <tr>
+                    <th>Item</th>
+                    <th>Price</th>
+                    <th>Retailer</th>
+                    <th>URL</th>
+                    <th>ADD</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in s_results %}
+                    <tr>
+                        <td>{{ item.name }}</td>
+                        <td>{{ item.price }}</td>
+                        <td>{{ item.retailer }}</td>
+                        <td>{{ item.url }}</td>
+                        <td>Add</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+{% endblock %}

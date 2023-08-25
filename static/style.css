@@ -1,15 +1,10 @@
-.navbar-dark .navbar-toggler-icon {
-    background-image: url("data:image/svg+xml;..");
-  }
-
 body{
-  background-color: #27d4d4;
+  background-color: #3c668d;
 }
 
 .center
 {
   text-align: center;
-  background-color: #1ad2d2;
 }
 
 .smallwidth
