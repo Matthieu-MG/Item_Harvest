@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, redirect, session
 
 app = Flask("__name__")
 
@@ -10,6 +10,29 @@ def after_request(response):
     response.headers["Pragma"] = "no-cache"
     return response
 
-@app.route("/")
+@app.route("/", methods=["GET"])
 def index():
     return render_template("index.html")
+
+@app.route("/searchResults", methods=["GET", "POST"])
+def searchResults():
+
+    if request.method == "POST":
+
+        query = request.form.get("query")
+        if not query:
+            print("Query is void")
+
+        return redirect("/")
+    
+    else:
+        return render_template("results.html")
+    
+@app.route("/login", methods=["GET", "POST"])
+def login():
+
+    if request.method == "POST":
+        return redirect("/")
+    
+    else:
+        return render_template("login.html")

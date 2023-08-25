@@ -1,0 +1,21 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Login
+{% endblock %}
+
+{% block main %}
+    <form action="/login" method="post">
+        <div class="center lightpadding">
+            <div class="mb-3">
+                <input autocomplete="off" name="username" placeholder="Username" type="text">
+            </div>
+            <div class="mb-3">
+                <input autocomplete="off" name="password" placeholder="Password" type="password">
+            </div>
+            <div class="mb-3">
+                <button class="btn btn-primary" type="submit">Login</button>
+            </div>
+        </div>
+    </form>
+{% endblock %}
