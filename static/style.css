@@ -1,3 +1,29 @@
 .navbar-dark .navbar-toggler-icon {
     background-image: url("data:image/svg+xml;..");
   }
+
+body{
+  background-color: #27d4d4;
+}
+
+.center
+{
+  text-align: center;
+  background-color: #1ad2d2;
+}
+
+.smallwidth
+{
+  width: 50%;
+}
+
+.lightpadding
+{
+  padding-top: 40px;
+  padding-bottom: 20px;
+}
+
+.smallopacity
+{
+  opacity: 50%;
+}

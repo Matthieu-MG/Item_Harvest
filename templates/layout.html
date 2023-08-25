@@ -20,14 +20,14 @@
         <nav class="bg-dark border navbar navbar-dark navbar-expand-md">
 
             <div class="container-fluid">
-
-                <a class="text-white navbar-brand" href="#">Navbar</a>
-
+                <a class="text-white navbar-brand" href="#">Central</a>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#collapsibleNavbar" aria-controls="navbarSupportedContent" aria-expanded="false">
-                <span class="navbar-toggler-icon""></span>
+                <span class="navbar-toggler-icon">
+                </span>
                 </button>
 
                 <div class="collapse navbar-collapse" id="collapsibleNavbar">
+                    {% if session["user_id"] %}
                     <ul class="navbar-nav me-auto mt-2">
                         <li class="nav-item">
                             <a class="text-white nav-link" href="/">Home</a>
@@ -40,6 +40,13 @@
                         <li class="nav-item"><a class="text-white nav-link" href="/settings">Settings</a></li>
                         <li class="nav-item"><a class="text-white nav-link" href="/logout">Log Out</a></li>
                     </ul>
+                    {% else %}
+                    <ul class="navbar-nav ms auto mt-2">
+                        <li class="nav-item"><a class="text-white nav-link" href="/login">Log In</a></li>
+                        <li class="nav-item"><a class="text-white nav-link" href="/register">Register</a></li>
+                    </ul>
+
+                    {% endif %}
                 </div>
 
             </div>
