@@ -21,6 +21,7 @@
                 </span>
                 </button>
                 <div class="collapse navbar-collapse" id="collapsibleNavbar">
+                    {% if session["user_id"] %}
                     <ul class="navbar-nav me-auto mt-2">
                         <li class="nav-item">
                             <a class="text-white nav-link" href="/">Home</a>
@@ -33,6 +34,13 @@
                         <li class="nav-item"><a class="text-white nav-link" href="/settings">Settings</a></li>
                         <li class="nav-item"><a class="text-white nav-link" href="/logout">Log Out</a></li>
                     </ul>
+                    {% else %}
+                    <ul class="navbar-nav ms auto mt-2">
+                        <li class="nav-item"><a class="text-white nav-link" href="/login">Log In</a></li>
+                        <li class="nav-item"><a class="text-white nav-link" href="/register">Register</a></li>
+                    </ul>
+
+                    {% endif %}
                 </div>
             </div>
         </nav>
