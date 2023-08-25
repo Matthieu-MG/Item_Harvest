@@ -21,10 +21,12 @@ def after_request(response):
     response.headers["Pragma"] = "no-cache"
     return response
 
+
 @app.route("/", methods=["GET"])
 @login_required
 def index():
     return render_template("index.html")
+
 
 @app.route("/searchResults", methods=["GET", "POST"])
 @login_required
@@ -41,6 +43,15 @@ def searchResults():
     else:
         return render_template("results.html")
     
+
+@app.route("/wishlist", methods=["GET"])
+@login_required
+def wishlist():
+
+    user_wishlist = []
+    return render_template("wishlist.html", user_wishlist=user_wishlist)
+    
+
 @app.route("/login", methods=["GET", "POST"])
 def login():
 
@@ -74,6 +85,17 @@ def login():
     else:
         return render_template("login.html")
     
+
+@app.route("/logout", methods=["GET"])
+def logout():
+
+    # Clears current session
+    session.clear()
+
+    # Returns to index/login route
+    return redirect("/")
+
+
 @app.route("/register", methods=["GET", "POST"])
 def register():
     if request.method == "POST":

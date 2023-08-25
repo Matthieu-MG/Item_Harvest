@@ -1,0 +1,26 @@
+{% extends 'layout.html' %}
+
+{% block title %}
+    Wishlist
+{% endblock %}
+
+{% block main %}
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Item Name</th>
+                <th>Price</th>
+                <th>Retailer</th>
+                <th>Link</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in user_wishlist %}
+                <tr>{{ item.name }}</tr>
+                <tr>{{ item.price }}</tr>
+                <tr>{{ item.retailer }}</tr>
+                <tr>{{ item.link }}</tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}
