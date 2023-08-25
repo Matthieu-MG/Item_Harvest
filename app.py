@@ -1,4 +1,5 @@
 from flask import Flask, render_template, request, redirect, session
+from helpers import login_required
 
 app = Flask("__name__")
 
@@ -11,10 +12,12 @@ def after_request(response):
     return response
 
 @app.route("/", methods=["GET"])
+@login_required
 def index():
     return render_template("index.html")
 
 @app.route("/searchResults", methods=["GET", "POST"])
+@login_required
 def searchResults():
 
     if request.method == "POST":
@@ -36,3 +39,20 @@ def login():
     
     else:
         return render_template("login.html")
+    
+@app.route("/register", methods=["GET", "POST"])
+def register():
+    if request.method == "POST":
+
+        username = request.form.get("username")
+        password = request.form.get("password")
+        confirmation = request.form.get("confirmation")
+
+        if not username or not password or not confirmation:
+            return redirect("/register")
+        
+
+        return redirect("/")
+    
+    else:
+        return render_template("register.html")
