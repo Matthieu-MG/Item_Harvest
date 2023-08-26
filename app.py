@@ -37,19 +37,49 @@ def index():
 def searchResults():
 
     if request.method == "POST":
-
+        
+        # !!! NOT WORKING !!! Checks if query is void and redirects to index
         query = request.form.get("query")
         if not query:
             print("Query is void")
+            redirect("/")
 
-        s_results = []
-        #s_results = db.execute("SELECT * FROM inventory WHERE item_name LIKE ?", "%" + query + "%")
+        # Search database for items that contains the query passed in in their item name
+        s_results = db.execute("SELECT * FROM inventory WHERE item_name LIKE ?", "%" + query + "%")
+
+        # Makes retailers to upper (TO BE CHANGED)
+        for result in s_results:
+            result["retailer"] = result["retailer"].upper()
 
         return render_template("results.html", s_results=s_results)
     
     else:
         return render_template("results.html")
     
+
+@app.route("/add", methods=["POST"])
+@login_required
+def add():
+    
+    # Gets items added to wishlist
+    items = request.get_json()
+    print(items)
+    items = items["wishlist"]
+
+    # Iterates through all items added to wishlist
+    for item in items:
+
+        # Checks if abnormal item id was passed from client side (item id not in database), and returns in that case
+        row = db.execute("SELECT * FROM inventory WHERE id = ?", item)
+        if len(row) != 1:
+            print("ABNORMAL ID PASSED IN")
+            return redirect("/")
+        
+        # Else inserts new items to user's wishlist
+        db.execute("INSERT INTO users_wishlist(item_id, user_id) VALUES (?, ?)", item, session["user_id"])
+
+    return redirect("/wishlist")
+
 
 @app.route("/wishlist", methods=["GET"])
 @login_required
