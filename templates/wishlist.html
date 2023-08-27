@@ -13,13 +13,13 @@
                     <th >Price</th>
                     <th >Retailer</th>
                     <th >Link</th>
-                    <th >Remove</th>
+                    <th ></th>
                 </tr>
             </thead>
             <tbody>
                 {% for item in user_wishlist %}
                 <tr>
-                    <td>{{ item.name }}</td>
+                    <td>{{ item.item_name }}</td>
                     <td>{{ item.price }}</td>
                     <td>{{ item.retailer }}</td>
                     <td>{{ item.link }}</td>

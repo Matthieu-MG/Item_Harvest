@@ -70,6 +70,12 @@ def add():
             print("ABNORMAL ID PASSED IN")
             return redirect(url_for('index'))
         
+        # If user already has that item, does not add it and goes to next item
+        exist = db.execute("SELECT * FROM users_wishlist WHERE item_id = ? AND user_id = ?", item, session["user_id"])
+        if len(exist) > 0:
+            print("Already Exists In Wishlist")
+            continue
+
         # Else inserts new items to user's wishlist
         db.execute("INSERT INTO users_wishlist(item_id, user_id) VALUES (?, ?)", item, session["user_id"])
 
@@ -80,7 +86,10 @@ def add():
 @login_required
 def wishlist():
 
-    user_wishlist = []
+    # Gets all items from user's wishlist
+    user_wishlist = db.execute("SELECT * FROM inventory WHERE id IN (SELECT item_id FROM users_wishlist WHERE user_id = ?);", session["user_id"])
+
+    # Renders wishlist page and passes in the user's wishlist
     return render_template("wishlist.html", user_wishlist=user_wishlist)
     
 
