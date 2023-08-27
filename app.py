@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, session
+from flask import Flask, render_template, request, redirect, session, url_for
 from cs50 import SQL
 from helpers import login_required
 from flask_session import Session
@@ -14,6 +14,7 @@ app.config["SESSION_PERMANENT"] = False
 app.config["SESSION_TYPE"] = "filesystem"
 Session(app)
 
+# Used in development so that templates change on the page when their source code is changed
 app.config["TEMPLATES_AUTO_RELOAD"] = True
 app.config["SEND_FILE_MAX_AGE_DEFAULT"] = 0
 
@@ -32,30 +33,24 @@ def index():
     return render_template("index.html")
 
 
-@app.route("/searchResults", methods=["GET", "POST"])
+@app.route("/searchResults", methods=["GET"])
 @login_required
 def searchResults():
 
-    if request.method == "POST":
-        
-        # !!! NOT WORKING !!! Checks if query is void and redirects to index
-        query = request.form.get("query")
-        if not query:
-            print("Query is void")
-            redirect("/")
+    # Gets query searches values
+    query = request.args.get("query")
+    if not query:
+        return redirect("/")
 
-        # Search database for items that contains the query passed in in their item name
-        s_results = db.execute("SELECT * FROM inventory WHERE item_name LIKE ?", "%" + query + "%")
+    # Search database for items that contains the query passed in in their item name
+    s_results = db.execute("SELECT * FROM inventory WHERE item_name LIKE ?", "%" + query + "%")
 
-        # Makes retailers to upper (TO BE CHANGED)
-        for result in s_results:
-            result["retailer"] = result["retailer"].upper()
+    # Makes retailers to upper (TO BE CHANGED)
+    for result in s_results:
+        result["retailer"] = result["retailer"].upper()
 
-        return render_template("results.html", s_results=s_results)
-    
-    else:
-        return render_template("results.html")
-    
+    return render_template("results.html", s_results=s_results)
+
 
 @app.route("/add", methods=["POST"])
 @login_required
@@ -73,12 +68,12 @@ def add():
         row = db.execute("SELECT * FROM inventory WHERE id = ?", item)
         if len(row) != 1:
             print("ABNORMAL ID PASSED IN")
-            return redirect("/")
+            return redirect(url_for('index'))
         
         # Else inserts new items to user's wishlist
         db.execute("INSERT INTO users_wishlist(item_id, user_id) VALUES (?, ?)", item, session["user_id"])
 
-    return redirect("/wishlist")
+    return redirect(url_for("wishlist"))
 
 
 @app.route("/wishlist", methods=["GET"])

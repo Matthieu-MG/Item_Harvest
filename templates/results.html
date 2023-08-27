@@ -11,13 +11,15 @@
         // Stores all the items checked by user
         items_added = []
 
-        // Sends all of the items in items_added to server
+        // Sends all of the items in items_added to server and redirects to /wishlist route
         function addToWishlist(){
             $.ajax({
                 url: '/add',
                 type: 'POST',
                 contentType: 'application/json',
                 data: JSON.stringify({ 'wishlist': items_added}),
+            }).done(function(data){
+                window.location.href = '/wishlist'
             })
         }
         
@@ -49,10 +51,12 @@
         }
     </script>
 
-    <div>
-        <button onclick="addToWishlist()">Add To Wishlist</button>
+    <div class="center lightpadding">
+        <button class="btn btn-success" onclick="addToWishlist()">
+            Add To Wishlist
+        </button>
     </div>
-
+    
     <div class="table-responsive-sm">
         <table class="table">
             <thead class="table-warning">
@@ -66,7 +70,7 @@
             </thead>
             <tbody>
                 {% for item in s_results %}
-                    <tr>
+                    <tr class="table-dark">
                         <td>{{ item.item_name }}</td>
                         <td>{{ item.price }}</td>
                         <td>{{ item.retailer }}</td>
