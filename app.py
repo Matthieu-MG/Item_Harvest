@@ -43,7 +43,12 @@ def searchResults():
         return redirect("/")
 
     # Search database for items that contains the query passed in in their item name
-    s_results = db.execute("SELECT * FROM inventory WHERE item_name LIKE ?", "%" + query + "%")
+    s_results = db.execute("SELECT * FROM inventory WHERE item_name LIKE ?;", "%" + query + "%")
+    
+    # If search if not already in the user search history, add it
+    row = db.execute("SELECT * FROM users_history WHERE search = ? AND user_id = ?;", query, session["user_id"])
+    if row != 1:
+        db.execute("INSERT INTO users_history (search, user_id) VALUES (?, ?);", query, session["user_id"])
 
     # Makes retailers to upper (TO BE CHANGED)
     for result in s_results:
