@@ -24,8 +24,21 @@ if not os.path.isfile('data.json'):
 with open('data.json', 'r') as file:
     data = json.load(file)
 
+response = requests.get('https://restcountries.com/v3.1/all?fields=name,currencies')
+countries_data = response.json()
+currency = countries_data[0]['currencies']
+south_africa_currency = list(currency.keys())[0]
+print(data['rates'][south_africa_currency])
+
+response = requests.get('https://restcountries.com/v3.1/name/France/')
+if response.status_code == 200:
+    france_data = response.json()
+    x = list(france_data[0]['currencies'].keys())[0]
+    print(data['rates'][x])
+
+
 #  !! Remove !! Prints current MUR currency value in relation to USD
-print(data["rates"]["MUR"])
+#print(data["rates"]["MUR"])
 
 app = Flask("__name__")
 
