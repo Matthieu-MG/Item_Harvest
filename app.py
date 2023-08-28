@@ -3,6 +3,18 @@ from cs50 import SQL
 from helpers import login_required
 from flask_session import Session
 from werkzeug.security import generate_password_hash, check_password_hash
+import os
+from dotenv import load_dotenv
+import requests
+
+load_dotenv()  # take environment variables from .env.
+
+# Gets current currency values via the open exchange rates api
+parameters = {"app_id": os.getenv("OER_API_KEY")}
+response = requests.get('https://openexchangerates.org/api/latest.json', params=parameters)
+data = response.json()
+data = data["rates"]
+print(data["MUR"])
 
 app = Flask("__name__")
 
