@@ -349,9 +349,5 @@ $RECYCLE.BIN/
 *.lnk
 
 # End of https://www.toptal.com/developers/gitignore/api/python,linux,windows,osx,flask,visualstudiocode
-flask_session/5e273c91eb36900829027c1cdb4ea4c6
-flask_session/6de654dc767f0e61394dd7278dbaf1ad
-flask_session/40d4680340d98e8332b8a909c9330fd5
-flask_session/42ab0dd601721e2a52f365a532c5117f
-flask_session/2029240f6d1128be89ddc32729463129
-flask_session/0537677869a7e31ae6629e53eb2ed086
+flask_session/
+data.json

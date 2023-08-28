@@ -6,15 +6,26 @@ from werkzeug.security import generate_password_hash, check_password_hash
 import os
 from dotenv import load_dotenv
 import requests
+import json
 
 load_dotenv()  # take environment variables from .env.
 
 # Gets current currency values via the open exchange rates api
 parameters = {"app_id": os.getenv("OER_API_KEY")}
-response = requests.get('https://openexchangerates.org/api/latest.json', params=parameters)
-data = response.json()
-data = data["rates"]
-print(data["MUR"])
+
+# If json file does not exist, make API request and cache response in json file
+if not os.path.isfile('data.json'):
+    response = requests.get('https://openexchangerates.org/api/latest.json', params=parameters)
+    data = response.json()
+    with open('data.json', 'w') as file:
+        json.dump(data, file)
+
+# Opens currency json file to read and load data
+with open('data.json', 'r') as file:
+    data = json.load(file)
+
+#  !! Remove !! Prints current MUR currency value in relation to USD
+print(data["rates"]["MUR"])
 
 app = Flask("__name__")
 
