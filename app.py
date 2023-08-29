@@ -1,6 +1,6 @@
 from flask import Flask, render_template, request, redirect, session, url_for
 from cs50 import SQL
-from helpers import login_required
+from helpers import login_required, getCurrency,  EbayFind, EbayFindByID
 from flask_session import Session
 from werkzeug.security import generate_password_hash, check_password_hash
 import os
@@ -8,37 +8,21 @@ from dotenv import load_dotenv
 import requests
 import json
 
-load_dotenv()  # take environment variables from .env.
+load_dotenv()
+# take environment variables from .env.
 
-# Gets current currency values via the open exchange rates api
-parameters = {"app_id": os.getenv("OER_API_KEY")}
+print(getCurrency('France'))
 
-# If json file does not exist, make API request and cache response in json file
-if not os.path.isfile('data.json'):
-    response = requests.get('https://openexchangerates.org/api/latest.json', params=parameters)
-    data = response.json()
-    with open('data.json', 'w') as file:
-        json.dump(data, file)
+'''
+legos = EbayFind('lego')
+for lego in legos:
+    print(lego['title'])
+    print(lego['id'])
+    print(lego['price'])
+    print(lego['image'])
 
-# Opens currency json file to read and load data
-with open('data.json', 'r') as file:
-    data = json.load(file)
-
-response = requests.get('https://restcountries.com/v3.1/all?fields=name,currencies')
-countries_data = response.json()
-currency = countries_data[0]['currencies']
-south_africa_currency = list(currency.keys())[0]
-print(data['rates'][south_africa_currency])
-
-response = requests.get('https://restcountries.com/v3.1/name/France/')
-if response.status_code == 200:
-    france_data = response.json()
-    x = list(france_data[0]['currencies'].keys())[0]
-    print(data['rates'][x])
-
-
-#  !! Remove !! Prints current MUR currency value in relation to USD
-#print(data["rates"]["MUR"])
+EbayFindByID(legos[0]['id'])
+'''
 
 app = Flask("__name__")
 
@@ -79,16 +63,14 @@ def searchResults():
         return redirect("/")
 
     # Search database for items that contains the query passed in in their item name
-    s_results = db.execute("SELECT * FROM inventory WHERE item_name LIKE ?;", "%" + query + "%")
+    #s_results = db.execute("SELECT * FROM inventory WHERE item_name LIKE ?;", "%" + query + "%")
     
     # If search if not already in the user search history, add it
     row = db.execute("SELECT * FROM users_history WHERE search = ? AND user_id = ?;", query, session["user_id"])
     if row != 1:
         db.execute("INSERT INTO users_history (search, user_id) VALUES (?, ?);", query, session["user_id"])
 
-    # Makes retailers to upper (TO BE CHANGED)
-    for result in s_results:
-        result["retailer"] = result["retailer"].upper()
+    s_results = EbayFind(query)
 
     return render_template("results.html", s_results=s_results)
 

@@ -71,10 +71,12 @@
             <tbody>
                 {% for item in s_results %}
                     <tr class="table-dark">
-                        <td>{{ item.item_name }}</td>
+                        <td>{{ item.title }}</td>
                         <td>{{ item.price }}</td>
                         <td>{{ item.retailer }}</td>
-                        <td>{{ item.link }}</td>
+                        <td>
+                            <a href="{{ item.link }}">Link</a>
+                        </td>
                         <td>
                             <input type="checkbox" value="{{ item.id }}" onchange="add_remove(this)">
                         </td>

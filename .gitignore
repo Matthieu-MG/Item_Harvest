@@ -351,3 +351,5 @@ $RECYCLE.BIN/
 # End of https://www.toptal.com/developers/gitignore/api/python,linux,windows,osx,flask,visualstudiocode
 flask_session/
 data.json
+tmp
+2tmp
