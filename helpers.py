@@ -2,9 +2,7 @@ from flask import session, redirect
 import requests
 import json
 import os
-from dotenv import load_dotenv
 from functools import wraps
-from ebaysdk.finding import Connection
 
 def login_required(f):
     """
@@ -140,3 +138,18 @@ def EbayFindByID(productId):
 
     print('finished')
     return None
+
+def FindProduct():
+    response = requests.get('https://open.api.ebay.com/shopping?'\
+    'callname=FindProducts'\
+    '&responseencoding=JSON'\
+    '&siteid=0'\
+    '&version=967'\
+    '&QueryKeywords=harry%20potter'\
+    '&AvailableItemsOnly=true'\
+    '&MaxEntries=2')
+    if response.status_code == 200:
+        print(response.json())
+    
+    else:
+        print('failure')

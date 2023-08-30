@@ -1,6 +1,6 @@
 from flask import Flask, render_template, request, redirect, session, url_for
 from cs50 import SQL
-from helpers import login_required, getCurrency,  EbayFind, EbayFindByID
+from helpers import login_required, getCurrency,  EbayFind, EbayFindByID, FindProduct
 from flask_session import Session
 from werkzeug.security import generate_password_hash, check_password_hash
 import os
@@ -10,8 +10,6 @@ import json
 
 load_dotenv()
 # take environment variables from .env.
-
-print(getCurrency('France'))
 
 '''
 legos = EbayFind('lego')
