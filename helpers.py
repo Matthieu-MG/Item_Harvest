@@ -79,7 +79,7 @@ def EbayFind(query):
                 # Gets the item's information
                 itemId = item['itemId'][0]
                 title  = item['title'][0]
-                image = item['galleryURL']
+                image = item['galleryURL'][0]
                 item_URL = item['viewItemURL'][0]
 
                 sellingStatus = item['sellingStatus'][0]
@@ -90,14 +90,14 @@ def EbayFind(query):
 
                 # Stores it in a dictionary
                 item_info = {
-                    'title' : title,
-                    'id' : itemId,
-                    'image' : image,
-                    'link' : item_URL,
-                    'state' : state,
-                    'currency' : currency,
-                    'price' : price,
-                    'retailer' : 'ebay'
+                    "title" : title,
+                    "id" : itemId,
+                    "image" : image,
+                    "link" : item_URL,
+                    "state" : state,
+                    "currency" : currency,
+                    "price" : price,
+                    "retailer" : 'ebay'
                 }
                 # Add that dictionary to the list
                 results.append(item_info)
@@ -127,6 +127,7 @@ def EbayFindByID(productId):
     if response.status_code == 200:
         data = response.json()
         data = data['findItemsByProductResponse'][0]['searchResult'][0]
+        print(data)
         
         if data['@count'] == '0':
             return

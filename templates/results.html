@@ -26,19 +26,19 @@
         function add_remove(checkbox){
 
             // Gets item's id
-            let id = checkbox.value
+            let item = checkbox.value
             if (checkbox.checked){
 
                 console.log("adding to array")
                 // adds item to end of array
-                items_added.push(id)
+                items_added.push(item)
                 console.log(items_added)
 
             }
             else{
 
                 // Gets index of item's id in array
-                const index = items_added.indexOf(id)
+                const index = items_added.indexOf(item)
 
                 // If id is in items_added array, remove it
                 if (index > -1){
@@ -56,7 +56,26 @@
             Add To Wishlist
         </button>
     </div>
-    
+
+    <div class="container">
+        <div class="row gy-3 my-3">
+            {% for item in s_results%}
+                
+            <div class="col-md-3">
+                <div class="card h-100">
+                    <img class="card-img-top" src="{{ item.image }}" alt="Card image cap">
+                    <div class="card-body">
+                      <h5 class="card-title">{{ item.title }}</h5>
+                      <p class="card-text">{{ item.retailer }} : {{ item.price }}</p>
+                      <a href="{{ item.link }}" class="btn btn-primary">Link</a>
+                    </div>
+                </div>
+            </div>
+
+            {% endfor %}
+        </div>
+    </div>
+
     <div class="table-responsive-sm">
         <table class="table">
             <thead class="table-warning">
@@ -78,7 +97,7 @@
                             <a href="{{ item.link }}">Link</a>
                         </td>
                         <td>
-                            <input type="checkbox" value="{{ item.id }}" onchange="add_remove(this)">
+                            <input type="checkbox" value='{"title": "{{ item.title }}", "price": {{ item.price }}, "link": "{{ item.link }}", "retailer" : "{{ item.retailer}}"}' onchange="add_remove(this)">
                         </td>
                     </tr>
                 {% endfor %}

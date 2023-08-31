@@ -11,6 +11,8 @@ import json
 load_dotenv()
 # take environment variables from .env.
 
+# print(getCurrency('Mauritius'))
+# EbayFindByID('175811784059')
 '''
 legos = EbayFind('lego')
 for lego in legos:
@@ -79,9 +81,17 @@ def add():
     
     # Gets items added to wishlist
     items = request.get_json()
-    print(items)
     items = items["wishlist"]
+    for item in items:
+        a = json.loads(item)
+        print(a['title'])
+        print(a['price'])
+        print(a['retailer'])
+        print(a['link'])
+        print()
+    
 
+    '''
     # Iterates through all items added to wishlist
     for item in items:
 
@@ -99,6 +109,7 @@ def add():
 
         # Else inserts new items to user's wishlist
         db.execute("INSERT INTO users_wishlist(item_id, user_id) VALUES (?, ?)", item, session["user_id"])
+    '''
 
     return redirect(url_for("wishlist"))
 
