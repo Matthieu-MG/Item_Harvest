@@ -1,6 +1,6 @@
 from flask import Flask, render_template, request, redirect, session, url_for
 from cs50 import SQL
-from helpers import login_required, getCurrency,  EbayFind, EbayFindByID, FindProduct
+from helpers import login_required, getCurrency,  EbayFind, EtsyFind
 from flask_session import Session
 from werkzeug.security import generate_password_hash, check_password_hash
 import os
@@ -50,7 +50,24 @@ def after_request(response):
 @app.route("/", methods=["GET"])
 @login_required
 def index():
-    return render_template("index.html")
+
+    # Gets user's history, to be used for autocomplete
+    history = []
+    user_history = db.execute("SELECT search FROM users_history WHERE user_id = ? ORDER BY id DESC LIMIT 5;", session["user_id"])
+
+    if len(user_history) > 0:
+        for search in user_history:
+
+            _search = search['search']
+
+            # If search is too long, truncate it
+            if len(_search) > 23:
+                _search = _search[:23]
+                _search = f"{_search}..."
+
+            history.append(_search)
+
+    return render_template("index.html", history=history)
 
 
 @app.route("/searchResults", methods=["GET"])

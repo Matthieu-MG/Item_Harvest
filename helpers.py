@@ -123,49 +123,14 @@ def EbayFind(query):
     except ConnectionError:
         return []
 
-def EbayFindByID(productId):
-    
-    # Gets API KEY
-    app_id = os.getenv("EBAY_SB_API_KEY")
 
-    # Makes API Request to EBAY
-    response = requests.get(f"https://svcs.ebay.com/services/search/FindingService/v1"\
-             f"?OPERATION-NAME=findItemsByProduct" \
-             f"&SERVICE-VERSION=1.0.0" \
-             f"&SECURITY-APPNAME={app_id}" \
-             f"&RESPONSE-DATA-FORMAT=JSON" \
-             f"&REST-PAYLOAD" \
-             f"paginationInput.entriesPerPage=2"\
-             f"&productId.@type=ReferenceID"\
-             f"&productId={productId}")
-    
-    if response.status_code == 200:
-        data = response.json()
-        data = data['findItemsByProductResponse'][0]['searchResult'][0]
-        print(data)
-        
-        if data['@count'] == '0':
-            return
-        
-        results = data['item']
-        if len(results) > 1:
-            for result in results:
-                print(result['itemId'][0])
+def EtsyFind():
+    app_id = os.getenv('ETSY_API_KEY')
+    response = requests.get(f'https://openapi.etsy.com/v3/application/shops/{app_id}/listings/active/')
 
-    print('finished')
-    return None
-
-def FindProduct():
-    response = requests.get('https://open.api.ebay.com/shopping?'\
-    'callname=FindProducts'\
-    '&responseencoding=JSON'\
-    '&siteid=0'\
-    '&version=967'\
-    '&QueryKeywords=harry%20potter'\
-    '&AvailableItemsOnly=true'\
-    '&MaxEntries=2')
     if response.status_code == 200:
         print(response.json())
-    
+
     else:
-        print('failure')
+        print(response)
+        print('not ok')

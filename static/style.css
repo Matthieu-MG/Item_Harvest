@@ -52,6 +52,13 @@ img
 
 .center
 {
+  justify-content: center;
+  display: flex;
+  align-items: center;
+}
+
+.text-centered
+{
   text-align: center;
 }
 
@@ -87,13 +94,24 @@ img
   width: auto;
 }
 
-.lef
+@media (min-width: 700px){
+  .chopchop
+  {
+    margin-left: 10%;
+    margin-right: 10%;
+  }
+}
+
+@media (max-width: 700px){
+  .chopchop
+  {
+    margin-left: 5%;
+    margin-right: 5%;
+  }
+}
+
+#autocomplete
 {
-  border-style: groove;
+  z-index: 5;
   opacity: 50%;
-  text-align: left;
-  padding-left: 20px;
-  margin-left: 40%;
-  margin-right: 40%;
-  margin-bottom: 20%;
 }

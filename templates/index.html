@@ -7,10 +7,68 @@
 {% block main %}
     <div class="center lightpadding hx-50">
         <form action="/searchResults" method="get">
-            <div class="mb-3">
+            <div>
                 <input autocomplete="off" class="mx-auto w-auto text form-control-lg" id="searchInput" name="query" placeholder="Search" type="text">
+                <div class="text-dark container justify-content-center my-1" id="autocomplete">
+                    {% for search in history %}
+                    <div class="col bg-light chopchop">
+                        <a href="searchResults?query={{ search }}">
+                            {{ search }}
+                        </a>
+                    </div>
+                    {% endfor %}
+                </div>
                 <button class="invisble-button" hidden type="submit">Confirm</button>
             </div>
         </form>
     </div>
+
+    <script>
+        // Bool to check if autocomplete div was clicked
+        let autoCompleteClicked = false;
+
+        // Gets div and input text elements of the DOM
+        let autocomplete = document.getElementById("autocomplete");
+        let searchInput = document.getElementById('searchInput');
+
+        // Set autocomplete display
+        autocomplete.style.display = 'none';
+
+        // If autocomplete is clicked...
+        autocomplete.addEventListener('mousedown', function()
+        {
+            // Will execute the callback lambda function : 
+            // When you set the timer to 0, it effectively pushes the execution of the function 
+            // to the end of the current event queue, allowing other events to finish first such as blur
+            setTimeout(function()
+            {
+                // Focuses search input so that autocomplete could be made invisible after being clicked on
+                searchInput.focus()
+            }, 0);
+
+            // Set bool to check if the div was clicked to true
+            autoCompleteClicked = true;
+        });
+
+        // !! NOT WORKING !! Should set bool to false if autocomplete div is not being clicked, dont know what event to check
+        autocomplete.addEventListener('mouseup', function()
+        {
+            autoCompleteClicked = false;
+        }, 100);
+
+        // When input text is focused, display autocomplete div
+        searchInput.addEventListener('focus', function()
+        {
+            autocomplete.style.display = 'block';
+        })
+
+        // When not focused, if autocomplete is not clicked, make it invisible
+        searchInput.addEventListener('blur', function()
+        {
+            if (!autoCompleteClicked)
+            {
+                autocomplete.style.display = 'none';
+            }
+        }, 100)
+    </script>
 {% endblock %}
