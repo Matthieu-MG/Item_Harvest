@@ -66,6 +66,9 @@
                     <img class="card-img-top" src="{{ item.image }}" alt="Card image cap">
                     <div class="card-body">
                       <h5 class="card-title">{{ item.title }}</h5>
+                      <p class="card-text">
+                        <input type="checkbox" value='{"title": "{{ item.title }}", "price": {{ item.price }}, "link": "{{ item.link }}", "retailer" : "{{ item.retailer}}", "img" : "{{ item.image }}"}' onchange="add_remove(this)">
+                      </p>
                       <p class="card-text">{{ item.retailer }} : {{ item.price }}</p>
                       <a href="{{ item.link }}" class="btn btn-primary">Link</a>
                     </div>
@@ -74,34 +77,5 @@
 
             {% endfor %}
         </div>
-    </div>
-
-    <div class="table-responsive-sm">
-        <table class="table">
-            <thead class="table-warning">
-                <tr>
-                    <th>Item</th>
-                    <th>Price</th>
-                    <th>Retailer</th>
-                    <th>URL</th>
-                    <th>ADD</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for item in s_results %}
-                    <tr class="table-dark">
-                        <td>{{ item.title }}</td>
-                        <td>{{ item.price }}</td>
-                        <td>{{ item.retailer }}</td>
-                        <td>
-                            <a href="{{ item.link }}">Link</a>
-                        </td>
-                        <td>
-                            <input type="checkbox" value='{"title": "{{ item.title }}", "price": {{ item.price }}, "link": "{{ item.link }}", "retailer" : "{{ item.retailer}}"}' onchange="add_remove(this)">
-                        </td>
-                    </tr>
-                {% endfor %}
-            </tbody>
-        </table>
     </div>
 {% endblock %}

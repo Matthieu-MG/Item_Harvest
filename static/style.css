@@ -1,6 +1,34 @@
 body{
-  height: 5000px;
+  margin: 0;
   overflow-x: hidden;
+}
+
+.card
+{
+  transition: all 0.3s;
+  background-color: #2ca46c99; /* 198754 */
+}
+
+.card:hover
+{
+  transform: scale(1.03);
+}
+
+.text
+{
+  border-radius: 50px;
+  opacity: 50%;
+  font-weight: bold;
+}
+
+.beeg
+{
+  size: 50px;
+}
+
+.invisible-button
+{
+  display: none;
 }
 
 .bg-img
@@ -9,7 +37,7 @@ body{
   width: 100vw;
   object-fit: cover;
   filter: brightness(0.6);
-  position: absolute;
+  position: fixed;
   top: 0;
   left: 0;
   z-index: -1;
@@ -41,4 +69,31 @@ img
 .smallopacity
 {
   opacity: 50%;
+}
+
+#btn-back-to-top
+{
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  display: none;
+  z-index: 2;
+}
+
+.searchbox
+{
+  padding-left: 25%;
+  padding-right: 40%;
+  width: auto;
+}
+
+.lef
+{
+  border-style: groove;
+  opacity: 50%;
+  text-align: left;
+  padding-left: 20px;
+  margin-left: 40%;
+  margin-right: 40%;
+  margin-bottom: 20%;
 }

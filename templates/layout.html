@@ -14,6 +14,37 @@
         <!-- jquery used for AJAX -->
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
 
+        <script>
+
+            document.addEventListener('DOMContentLoaded', function()
+            {
+                //Get the button
+                let mybutton = document.getElementById("btn-back-to-top");
+
+                // When the user scrolls down 20px from the top of the document, show the button
+                window.onscroll = function () { scrollFunction(); };
+
+                function scrollFunction() {
+                        if (document.body.scrollTop > 10 || document.documentElement.scrollTop > 10)
+                        {
+                            mybutton.style.display = "block";
+                        }
+                        else
+                        {
+                            mybutton.style.display = "none";
+                        }
+                }
+
+                // When the user clicks on the button, scroll to the top of the document
+                mybutton.addEventListener("click", backToTop);
+
+                function backToTop() {
+                    document.body.scrollTop = 0;
+                    document.documentElement.scrollTop = 0;
+                }
+            });
+        </script>
+
         <link href="static/style.css" rel="stylesheet">
         <title>{% block title %}{% endblock %}</title>
 
@@ -21,9 +52,12 @@
 
     <body>
 
+        <button type="button" class="btn btn-danger btn-floating btn-lg" id="btn-back-to-top">
+        </button>
+
         <img src="static/markus-spiske-vyHo3nnk8G8-unsplash.jpg" class="bg-img">
 
-        <nav class="border navbar navbar-dark navbar-expand-md">
+        <nav class="navbar navbar-dark navbar-expand-md">
             
             <div class="container-fluid">
                 <a class="text-white navbar-brand" href="/">Central</a>
@@ -62,6 +96,5 @@
         <main>
             {% block main %}{% endblock %}
         </main>
-        
     </body>
 </html>

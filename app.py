@@ -61,15 +61,13 @@ def searchResults():
     query = request.args.get("query")
     if not query:
         return redirect("/")
-
-    # Search database for items that contains the query passed in in their item name
-    #s_results = db.execute("SELECT * FROM inventory WHERE item_name LIKE ?;", "%" + query + "%")
     
     # If search if not already in the user search history, add it
     row = db.execute("SELECT * FROM users_history WHERE search = ? AND user_id = ?;", query, session["user_id"])
     if row != 1:
         db.execute("INSERT INTO users_history (search, user_id) VALUES (?, ?);", query, session["user_id"])
 
+    # Search items via Ebay's Finding API
     s_results = EbayFind(query)
 
     return render_template("results.html", s_results=s_results)
@@ -82,34 +80,32 @@ def add():
     # Gets items added to wishlist
     items = request.get_json()
     items = items["wishlist"]
-    for item in items:
-        a = json.loads(item)
-        print(a['title'])
-        print(a['price'])
-        print(a['retailer'])
-        print(a['link'])
-        print()
-    
 
-    '''
-    # Iterates through all items added to wishlist
+    # Iterates through all items that need to be added to wishlist
     for item in items:
+        product = json.loads(item)
 
-        # Checks if abnormal item id was passed from client side (item id not in database), and returns in that case
-        row = db.execute("SELECT * FROM inventory WHERE id = ?", item)
-        if len(row) != 1:
-            print("ABNORMAL ID PASSED IN")
-            return redirect(url_for('index'))
+        '''A CHECK IN CASE USER TRIES TO ENTER SAME PRODUCT EITHER NOTIFY USER OR INCREASE QUANTITY ?'''
+        row = db.execute("SELECT * FROM users_wishlist WHERE user_id = ? AND link = ? and title = ?"
+                         , session["user_id"]
+                         , product['link']
+                         , product['title']
+                    )
         
-        # If user already has that item, does not add it and goes to next item
-        exist = db.execute("SELECT * FROM users_wishlist WHERE item_id = ? AND user_id = ?", item, session["user_id"])
-        if len(exist) > 0:
-            print("Already Exists In Wishlist")
+        # Checks if item is already in wishlist, if yes does not add it
+        if len(row) > 0:
+            print("Already in wishlist")
             continue
 
-        # Else inserts new items to user's wishlist
-        db.execute("INSERT INTO users_wishlist(item_id, user_id) VALUES (?, ?)", item, session["user_id"])
-    '''
+        # Add Item To Wishlist
+        db.execute("INSERT INTO users_wishlist(user_id, title, price, retailer, link, img) VALUES (?, ?, ?, ?, ?, ?);"
+                    ,session["user_id"]
+                    ,product['title']
+                    ,product['price']
+                    ,product['retailer']
+                    ,product['link']
+                    ,product['img']
+                )
 
     return redirect(url_for("wishlist"))
 
@@ -119,7 +115,7 @@ def add():
 def wishlist():
 
     # Gets all items from user's wishlist
-    user_wishlist = db.execute("SELECT * FROM inventory WHERE id IN (SELECT item_id FROM users_wishlist WHERE user_id = ?);", session["user_id"])
+    user_wishlist = db.execute("SELECT * FROM users_wishlist WHERE user_id = ?;", session["user_id"])
 
     # Renders wishlist page and passes in the user's wishlist
     return render_template("wishlist.html", user_wishlist=user_wishlist)

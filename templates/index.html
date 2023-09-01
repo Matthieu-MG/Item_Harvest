@@ -5,11 +5,11 @@
 {% endblock %}
 
 {% block main %}
-    <div class="center lightpadding">
+    <div class="center lightpadding hx-50">
         <form action="/searchResults" method="get">
             <div class="mb-3">
-                <input autocomplete="off" class="mx-auto w-auto" name="query" placeholder="Search" type="text">
-                <button class="btn btn-primary" type="submit">Confirm</button>
+                <input autocomplete="off" class="mx-auto w-auto text form-control-lg" id="searchInput" name="query" placeholder="Search" type="text">
+                <button class="invisble-button" hidden type="submit">Confirm</button>
             </div>
         </form>
     </div>

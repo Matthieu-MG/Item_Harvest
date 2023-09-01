@@ -5,28 +5,27 @@
 {% endblock %}
 
 {% block main %}
-    <div class="table-responsive-sm">
-        <table class="table">
-            <thead>
-                <tr>
-                    <th >Item Name</th>
-                    <th >Price</th>
-                    <th >Retailer</th>
-                    <th >Link</th>
-                    <th ></th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for item in user_wishlist %}
-                <tr>
-                    <td>{{ item.item_name }}</td>
-                    <td>{{ item.price }}</td>
-                    <td>{{ item.retailer }}</td>
-                    <td>{{ item.link }}</td>
-                    <td>X</td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
+    <div class="container justify-content center">
+        <h3 class="text-white">Your Items' Wishlist</h3>
+        <h2 class="text-white">Total Price : 000</h2>
+    </div>
+    <div class="container">
+        <div class="row gy-3 my-3">
+            {% for item in user_wishlist %}
+            <div class="col-sm-3">
+                <div class="card h-100">
+                    <img class="card-img-top" src="{{ item.img }}" alt="Card image cap">
+                    <div class="card-body">
+                        <h5 class="card-title">{{ item.title }}</h5>
+                        <p class="card-text">
+                            <input type="checkbox" value='{"title": "{{ item.title }}", "price": {{ item.price }}, "link": "{{ item.link }}", "retailer" : "{{ item.retailer}}", "img" : "{{ item.image }}"}'>
+                        </p>
+                        <p class="card-text">{{ item.retailer }} : {{ item.price }}</p>
+                        <a href="{{ item.link }}" class="btn btn-primary">Link</a>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
     </div>
 {% endblock %}

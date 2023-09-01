@@ -51,66 +51,81 @@ def EbayFind(query):
     # Gets API KEY
     app_id = os.getenv("EBAY_SB_API_KEY")
 
-    # Makes API Request to EBAY
-    response = requests.get(f"https://svcs.ebay.com/services/search/FindingService/v1?OPERATION-NAME=findItemsAdvanced" \
-             f"&SERVICE-VERSION=1.0.0" \
-             f"&SECURITY-APPNAME={app_id}" \
-             f"&RESPONSE-DATA-FORMAT=JSON" \
-             f"&REST-PAYLOAD" \
-             f"&keywords={query}")
-    
-    # IF Status Code is done
-    if response.status_code == 200:
+    try:
+        # Makes API Request to EBAY
+        response = requests.get(f"https://svcs.ebay.com/services/search/FindingService/v1?OPERATION-NAME=findItemsAdvanced" \
+                f"&SERVICE-VERSION=1.0.0" \
+                f"&SECURITY-APPNAME={app_id}" \
+                f"&RESPONSE-DATA-FORMAT=JSON" \
+                f"&REST-PAYLOAD" \
+                f"&keywords={query}")
         
-        # Convert To JSON and stores search results as a list in data
-        data = response.json()
-        data = data['findItemsAdvancedResponse'][0]['searchResult'][0]
-        #print(data['@count'])
-
-        # If request returned at least one item
-        if len(data) > 1 :
-
-            # Will store a dictionary (containing name, price, etc...) for each item
-            results = []
-
-            # Iterates through each item of the search results
-            for item in (data['item']):
-
-                # Gets the item's information
-                itemId = item['itemId'][0]
-                title  = item['title'][0]
-                image = item['galleryURL'][0]
-                item_URL = item['viewItemURL'][0]
-
-                sellingStatus = item['sellingStatus'][0]
-                state = sellingStatus['sellingState'][0]
-                pricing = sellingStatus['currentPrice']
-                currency = pricing[0]['@currencyId']
-                price = pricing[0]['__value__']
-
-                # Stores it in a dictionary
-                item_info = {
-                    "title" : title,
-                    "id" : itemId,
-                    "image" : image,
-                    "link" : item_URL,
-                    "state" : state,
-                    "currency" : currency,
-                    "price" : price,
-                    "retailer" : 'ebay'
-                }
-                # Add that dictionary to the list
-                results.append(item_info)
+        # IF Status Code is done
+        if response.status_code == 200:
             
-            # Return the list (of dictionaries) of search results
-            return results
-        
-    # Else return an empty list
-    return []
+            # Convert To JSON and stores search results as a list in data
+            data = response.json()
+
+            try:
+                data = data['findItemsAdvancedResponse'][0]['searchResult'][0]
+                #print(data['@count'])
+
+                # If request returned at least one item
+                if len(data) > 1 :
+
+                    # Will store a dictionary (containing name, price, etc...) for each item
+                    results = []
+
+                    # Iterates through each item of the search results
+                    for item in (data['item']):
+
+                        # Gets the item's information
+                        itemId = item['itemId'][0]
+                        title  = item['title'][0]
+                        image = item['galleryURL'][0]
+                        item_URL = item['viewItemURL'][0]
+
+                        sellingStatus = item['sellingStatus'][0]
+                        state = sellingStatus['sellingState'][0]
+                        pricing = sellingStatus['currentPrice']
+                        currency = pricing[0]['@currencyId']
+                        price = pricing[0]['__value__']
+
+                        # Stores it in a dictionary
+                        item_info = {
+                            "title" : title,
+                            "id" : itemId,
+                            "image" : image,
+                            "link" : item_URL,
+                            "state" : state,
+                            "currency" : currency,
+                            "price" : price,
+                            "retailer" : 'ebay'
+                        }
+                        # Add that dictionary to the list
+                        results.append(item_info)
+                    
+                    # Return the list (of dictionaries) of search results
+                    return results
+                
+                # If searchResults is 0, returns empty list
+                else:
+                    return []
+            
+            # Handles case where trying to access a key that does not exist such as searchResult
+            except KeyError:
+                return [] 
+            
+        # If status code is not 200 returns an empty list
+        return []
+    
+    # Handles case where could not connect to API
+    except ConnectionError:
+        return []
 
 def EbayFindByID(productId):
     
-        # Gets API KEY
+    # Gets API KEY
     app_id = os.getenv("EBAY_SB_API_KEY")
 
     # Makes API Request to EBAY
