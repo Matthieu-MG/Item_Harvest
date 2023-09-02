@@ -81,7 +81,7 @@ def searchResults():
     
     # If search if not already in the user search history, add it
     row = db.execute("SELECT * FROM users_history WHERE search = ? AND user_id = ?;", query, session["user_id"])
-    if row != 1:
+    if len(row) < 1:
         db.execute("INSERT INTO users_history (search, user_id) VALUES (?, ?);", query, session["user_id"])
 
     # Search items via Ebay's Finding API
@@ -96,35 +96,62 @@ def add():
     
     # Gets items added to wishlist
     items = request.get_json()
-    items = items["wishlist"]
+    try:
+        items = items["wishlist"]
 
-    # Iterates through all items that need to be added to wishlist
-    for item in items:
-        product = json.loads(item)
+        # Iterates through all items that need to be added to wishlist
+        for item in items:
+            product = json.loads(item)
 
-        '''A CHECK IN CASE USER TRIES TO ENTER SAME PRODUCT EITHER NOTIFY USER OR INCREASE QUANTITY ?'''
-        row = db.execute("SELECT * FROM users_wishlist WHERE user_id = ? AND link = ? and title = ?"
-                         , session["user_id"]
-                         , product['link']
-                         , product['title']
+            '''A CHECK IN CASE USER TRIES TO ENTER SAME PRODUCT EITHER NOTIFY USER OR INCREASE QUANTITY ?'''
+            row = db.execute("SELECT * FROM users_wishlist WHERE user_id = ? AND link = ? and title = ?"
+                            , session["user_id"]
+                            , product['link']
+                            , product['title']
+                        )
+            
+            # Checks if item is already in wishlist, if yes does not add it
+            if len(row) > 0:
+                print("Already in wishlist")
+                continue
+
+            # Add Item To Wishlist
+            db.execute("INSERT INTO users_wishlist(user_id, title, price, retailer, link, img) VALUES (?, ?, ?, ?, ?, ?);"
+                        ,session["user_id"]
+                        ,product['title']
+                        ,product['price']
+                        ,product['retailer']
+                        ,product['link']
+                        ,product['img']
                     )
-        
-        # Checks if item is already in wishlist, if yes does not add it
-        if len(row) > 0:
-            print("Already in wishlist")
-            continue
-
-        # Add Item To Wishlist
-        db.execute("INSERT INTO users_wishlist(user_id, title, price, retailer, link, img) VALUES (?, ?, ?, ?, ?, ?);"
-                    ,session["user_id"]
-                    ,product['title']
-                    ,product['price']
-                    ,product['retailer']
-                    ,product['link']
-                    ,product['img']
-                )
+            
+    except KeyError:
+        print('Invalid Data Added')
 
     return redirect(url_for("wishlist"))
+
+@app.route("/remove", methods=["POST"])
+@login_required
+def remove():
+
+    # Gets item to be removed from wishlist
+    item = request.get_json()
+    try:
+        # Check if item is in user's wishlist
+        item = item['item']
+        row = db.execute("SELECT id FROM users_wishlist WHERE user_id = ? AND link = ?;", session['user_id'], item)
+
+        # If it is remove it
+        if len(row) == 1:
+            db.execute("DELETE FROM users_wishlist WHERE id = ?;", row[0]['id'])
+            
+        else:
+            print('error finding item in wishlist')
+
+    except KeyError:
+        print('key error when removing item from wishlist !')
+
+    return render_template('/wishlist.html')
 
 
 @app.route("/wishlist", methods=["GET"])
@@ -137,6 +164,29 @@ def wishlist():
     # Renders wishlist page and passes in the user's wishlist
     return render_template("wishlist.html", user_wishlist=user_wishlist)
     
+
+@app.route('/settings')
+@login_required
+def settings():
+
+    return render_template('settings.html')
+
+
+@app.route('/deleteHistory', methods=['POST'])
+@login_required
+def deleteHistory():
+
+    confirmation = request.get_json()
+    
+    try:
+        confirmation = confirmation['delete']
+        if confirmation == 'ok':
+            db.execute("DELETE FROM users_history WHERE user_id = ?;", session['user_id'])
+    
+    except KeyError:
+        print('Invalid Key For Delete')
+
+    return render_template('settings.html')
 
 @app.route("/login", methods=["GET", "POST"])
 def login():

@@ -10,15 +10,15 @@
         <h2 class="text-white">Total Price : 000</h2>
     </div>
     <div class="container">
-        <div class="row gy-3 my-3">
+        <div class="row gy-3 my-3" id="main">
             {% for item in user_wishlist %}
-            <div class="col-sm-3">
+            <div class="col-sm-3" id="{{ item.link }}">
                 <div class="card h-100">
                     <img class="card-img-top" src="{{ item.img }}" alt="Card image cap">
                     <div class="card-body">
                         <h5 class="card-title">{{ item.title }}</h5>
                         <p class="card-text">
-                            <input type="checkbox" value='{"title": "{{ item.title }}", "price": {{ item.price }}, "link": "{{ item.link }}", "retailer" : "{{ item.retailer}}", "img" : "{{ item.image }}"}'>
+                            <button onclick="remove('{{item.link}}')">Remove</button>
                         </p>
                         <p class="card-text">{{ item.retailer }} : {{ item.price }}</p>
                         <a href="{{ item.link }}" class="btn btn-primary">Link</a>
@@ -28,4 +28,23 @@
             {% endfor %}
         </div>
     </div>
+
+    <script>
+        // Function to remove an item from wishlist in database and on the screen
+        function remove(link)
+        {
+            // Gets element in the DOM
+            item = document.getElementById(link)
+
+            // AJAX request to send the item url to '/remove' route, and remove item on client side's DOM asynchronously
+            $.ajax({
+                url: '/remove',
+                type: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify({'item': link})
+            }).done(function(){
+                item.remove()
+            });
+        }
+    </script>
 {% endblock %}

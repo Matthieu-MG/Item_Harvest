@@ -1,0 +1,45 @@
+{% extends 'layout.html' %}
+
+{% block title %}
+    Settings
+{% endblock %}
+
+{% block main %}
+    <div class="transparent-div fw-bold container-lg" style="height: 80vh">
+        <div class="row">
+            <div class="col-lg-2 col-sm-12 py-2">
+                Settings
+            </div>
+            <div class="col-lg-10 col-sm-12 py-3">
+                <div class="justify-content-center">
+                    Delete Your Search History:
+                    <button class="btn btn-sm btn-warning ms-2" onclick="deleteHistory()">DELETE HISTORY</button>
+                </div>
+                <div class="justify-content-center py-3">
+                    Disable History Records:
+                    <button class="btn btn-sm btn-info ms-2" onclick="">DISABLE</button>
+                </div>
+                <div class="py-3">
+                    <label>Change Password: </label>
+                    <div>
+                        <input placeholder="Previous Password" type="password">
+                        <input placeholder="New Password" type="password">
+                        <button class="btn btn-sm btn-info ms-2" onclick="">Submit</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function deleteHistory()
+        {
+            $.ajax({
+                url: '/deleteHistory',
+                type: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify({'delete': 'ok'})
+            })
+        }
+    </script>
+{% endblock %}

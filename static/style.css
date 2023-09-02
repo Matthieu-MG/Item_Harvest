@@ -115,3 +115,8 @@ img
   z-index: 5;
   opacity: 50%;
 }
+
+.transparent-div
+{
+  background-color: rgba(255, 255, 255, 0.464);
+}
