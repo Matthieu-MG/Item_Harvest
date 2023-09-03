@@ -6,7 +6,7 @@ body{
 .card
 {
   transition: all 0.3s;
-  background-color: #2ca46c99; /* 198754 */
+  background-color: #ffffff99; /* 2ca46c99 */
 }
 
 .card:hover
@@ -36,7 +36,7 @@ body{
   height: 100vh;
   width: 100vw;
   object-fit: cover;
-  filter: brightness(0.6);
+  filter: brightness(0.8);
   position: fixed;
   top: 0;
   left: 0;
@@ -124,4 +124,9 @@ img
 .custom-form
 {
   background-color: rgba(240, 248, 255, 0.534);
+}
+
+.price
+{
+  font-weight: bold;
 }

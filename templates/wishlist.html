@@ -7,7 +7,7 @@
 {% block main %}
     <div class="container justify-content text-centered">
         <h3 class="text-white">Your Items' Wishlist</h3>
-        <h2 class="text-white">Total Price : 000</h2>
+        <h2 class="text-white" id="total">Total: 000</h2>
     </div>
     <div class="container">
         <div class="row gy-3 my-3" id="main">
@@ -20,7 +20,8 @@
                         <p class="card-text">
                             <button class="btn btn-close-white btn-dark" onclick="remove('{{item.link}}')">Remove</button>
                         </p>
-                        <p class="card-text">{{ item.retailer }} : {{ item.price }}</p>
+                        <p class="card-text price">{{ item.price }}</p>
+                        <p class="card-text">{{ item.retailer }}</p>
                         <a href="{{ item.link }}" class="btn btn-primary">Link</a>
                     </div>
                 </div>
@@ -30,6 +31,28 @@
     </div>
 
     <script>
+
+        // Calculates total from all items in wishlist and display on webpage
+        let prices = Array.from(document.getElementsByClassName('price'));
+        total = 0;
+        prices.forEach(function(price){
+            total += parseFloat(price.innerHTML);
+        });
+
+        let total_element = document.getElementById('total');
+        total_element.innerHTML = `Total: ${total}`;
+
+        // Function to decrement total by the item's price due to its removal
+        function updateTotal(price)
+        {
+            total -= price;
+            if (total <= 0)
+            {
+                total = 0;
+            }
+            total_element.innerHTML = `total: ${total}`;
+        }
+
         // Function to remove an item from wishlist in database and on the screen
         function remove(link)
         {
@@ -43,7 +66,13 @@
                 contentType: 'application/json',
                 data: JSON.stringify({'item': link})
             }).done(function(){
-                item.remove()
+                // Gets price of item
+                let price = item.getElementsByClassName('price');
+                price = parseFloat(price[0].innerHTML);
+                // Updates total
+                updateTotal(price);
+                // Remove item from DOM
+                item.remove();
             });
         }
     </script>
