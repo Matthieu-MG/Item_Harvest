@@ -13,11 +13,22 @@
             <div class="col-lg-10 col-sm-12 py-3">
                 <div class="justify-content-center">
                     Delete Your Search History:
-                    <button class="btn btn-sm btn-warning ms-2" onclick="deleteHistory()">DELETE HISTORY</button>
+                    <button class="btn btn-sm btn-warning ms-2" id="delete" onclick="send(id, '/deleteHistory')">DELETE HISTORY</button>
                 </div>
                 <div class="justify-content-center py-3">
-                    Disable History Records:
-                    <button class="btn btn-sm btn-info ms-2" onclick="">DISABLE</button>
+                    {% if pref == 1 %}
+                        Disable
+                    {% else %}
+                        Enable
+                    {% endif %}
+                    History Records:
+                    <button class="btn btn-sm btn-info ms-2" id="disable" onclick="send(id, '/enableDisableHistory')">
+                        {% if pref == 1 %}
+                            DISABLE
+                        {% else %}
+                            ENABLE
+                        {% endif %}
+                    </button>
                 </div>
                 <div class="py-3">
                     <label>Change Password: </label>
@@ -32,14 +43,22 @@
     </div>
 
     <script>
-        function deleteHistory()
+
+        // Posts to a route passed in (To delete history or disable search records)
+        function send(id, route)
         {
+            // Gets reference to button in DOM
+            let button = document.getElementById(id);
+
+            // AJAX request : When it is done, disable button and display completed as content
             $.ajax({
-                url: '/deleteHistory',
-                type: 'POST',
-                contentType: 'application/json',
-                data: JSON.stringify({'delete': 'ok'})
-            })
+                url: route,
+                type: 'POST'
+            }).done( function()
+            {
+                button.disabled = true;
+                button.innerHTML = 'Completed';
+            });
         }
     </script>
 {% endblock %}

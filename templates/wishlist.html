@@ -18,7 +18,7 @@
                     <div class="card-body">
                         <h5 class="card-title">{{ item.title }}</h5>
                         <p class="card-text">
-                            <button onclick="remove('{{item.link}}')">Remove</button>
+                            <button class="btn btn-close-white btn-dark" onclick="remove('{{item.link}}')">Remove</button>
                         </p>
                         <p class="card-text">{{ item.retailer }} : {{ item.price }}</p>
                         <a href="{{ item.link }}" class="btn btn-primary">Link</a>

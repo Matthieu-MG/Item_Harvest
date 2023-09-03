@@ -49,6 +49,22 @@
                 console.log("unchecked")
             }
         }
+
+        function directAdd(id, btn_id)
+        {
+            let item = document.getElementById(id)
+            let button = document.getElementById(btn_id)
+
+            $.ajax({
+                url: '/directAdd',
+                type: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify({ 'item': item.value })
+            }).done(function(){
+                button.disabled = true;
+                button.innerHTML = 'Added';
+            })
+        }
     </script>
 
     <div class="center lightpadding">
@@ -67,7 +83,8 @@
                     <div class="card-body">
                       <h5 class="card-title">{{ item.title }}</h5>
                       <p class="card-text">
-                        <input type="checkbox" value='{"title": "{{ item.title }}", "price": {{ item.price }}, "link": "{{ item.link }}", "retailer" : "{{ item.retailer}}", "img" : "{{ item.image }}"}' onchange="add_remove(this)">
+                        <input type="checkbox" id="{{ item.link }}" value='{"title": "{{ item.title }}", "price": {{ item.price }}, "link": "{{ item.link }}", "retailer" : "{{ item.retailer}}", "img" : "{{ item.image }}"}' onchange="add_remove(this)">
+                        <button class="btn btn-primary btn-sm" id="button{{ item.link }}" onclick="directAdd('{{ item.link }}', id)">Direct Add</button>
                       </p>
                       <p class="card-text">{{ item.retailer }} : {{ item.price }}</p>
                       <a href="{{ item.link }}" class="btn btn-primary">Link</a>

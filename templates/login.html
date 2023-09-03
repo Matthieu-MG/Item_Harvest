@@ -6,16 +6,28 @@
 
 {% block main %}
     <form action="/login" method="post">
-            <div class="lightpadding text-centered">
-                <div class="mb-3">
-                    <input autocomplete="off" name="username" placeholder="Username" type="text">
-                </div>
-                <div class="mb-3">
-                    <input autocomplete="off" name="password" placeholder="Password" type="password">
-                </div>
-                <div class="mb-3">
-                    <button class="btn btn-primary" type="submit">Login</button>
+        <div class="container d-flex justify-content-center align-items-center">
+            <div class="col-12 mx-auto ">
+
+                <div class="card custom-form">
+                    <div class="card-body">
+                    <h5 class="card-title text-center">Welcome To Item Harvest</h5>
+                    
+                    <p class="card-text">
+                        <div class="form-floating mb-3 col-6 mx-auto d-block">
+                            <input autocomplete="off" name="username" id="username" class="form-control" type="text">
+                            <label for="username">Username</label>
+                        </div>
+                        <div class="form-floating mb-3 col-6 mx-auto d-block">
+                            <input autocomplete="off" name="password" id="password" class="form-control" type="password">
+                            <label for="password">Password</label>
+                        </div>
+                    </p>
+                    
+                    <button class="mx-auto d-block btn btn-primary" type="submit" >Login</button>
+                    </div>
                 </div>
             </div>
+        </div>
     </form>
 {% endblock %}

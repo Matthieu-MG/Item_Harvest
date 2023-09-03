@@ -12,8 +12,8 @@
                 <div class="text-dark container justify-content-center my-1" id="autocomplete">
                     {% for search in history %}
                     <div class="col bg-light chopchop">
-                        <a href="searchResults?query={{ search }}">
-                            {{ search }}
+                        <a href="searchResults?query={{ search.search }}">
+                            {{ search.display }}
                         </a>
                     </div>
                     {% endfor %}

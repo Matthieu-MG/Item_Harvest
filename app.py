@@ -58,13 +58,20 @@ def index():
     if len(user_history) > 0:
         for search in user_history:
 
-            _search = search['search']
+            s = search['search']
+            display = s
 
-            # If search is too long, truncate it
-            if len(_search) > 23:
-                _search = _search[:23]
-                _search = f"{_search}..."
+            # If search is too long, truncate it for the display
+            if len(s) > 23:
+                display = s[:23]
+                display = f"{display}..."
 
+            _search = {
+                'search': s,
+                'display': display
+            }
+
+            # Add to history list
             history.append(_search)
 
     return render_template("index.html", history=history)
@@ -79,15 +86,43 @@ def searchResults():
     if not query:
         return redirect("/")
     
-    # If search if not already in the user search history, add it
-    row = db.execute("SELECT * FROM users_history WHERE search = ? AND user_id = ?;", query, session["user_id"])
-    if len(row) < 1:
-        db.execute("INSERT INTO users_history (search, user_id) VALUES (?, ?);", query, session["user_id"])
+    # Checks whether user allows for their history to be recorded
+    recordHistory = db.execute("SELECT record_history FROM users WHERE id = ?;", session['user_id'])
+    try:
+        # If user allows it, record search query
+        if len(recordHistory) == 1 and recordHistory[0]['record_history'] == 1:
+            
+            # If search is not already in the user search history, add it
+            row = db.execute("SELECT * FROM users_history WHERE search = ? AND user_id = ?;", query, session["user_id"])
+            if len(row) < 1:
+                db.execute("INSERT INTO users_history (search, user_id) VALUES (?, ?);", query, session["user_id"])
+
+    except KeyError:
+        print('Could not get record value')
 
     # Search items via Ebay's Finding API
     s_results = EbayFind(query)
 
     return render_template("results.html", s_results=s_results)
+
+
+@app.route('/enableDisableHistory', methods=["POST"])
+@login_required
+def disableHistory():
+
+    ''' Enables/Disables user's history '''
+
+    # Check whether user has their history recorded enabled or disabled
+    isEnabled = db.execute("SELECT record_history FROM users WHERE id = ?;", session['user_id'])
+    if len(isEnabled) == 1:
+        # If enabled, disable it
+        if isEnabled[0]['record_history'] == 1:
+            db.execute("UPDATE users SET record_history = 0 WHERE id = ?;",session['user_id'])
+        # If disabled, enable it
+        else:
+            db.execute("UPDATE users SET record_history = 1 WHERE id = ?;",session['user_id'])
+
+    return render_template('settings.html')
 
 
 @app.route("/add", methods=["POST"])
@@ -130,6 +165,44 @@ def add():
 
     return redirect(url_for("wishlist"))
 
+
+@app.route('/directAdd', methods=['POST'])
+@login_required
+def directAdd():
+    ''' Route to directly add an item to the wishlist '''
+    item = request.get_json()
+    try:
+        item = item['item']
+        item = json.loads(item)
+
+        '''A CHECK IN CASE USER TRIES TO ENTER SAME PRODUCT EITHER NOTIFY USER OR INCREASE QUANTITY ?'''
+        row = db.execute("SELECT * FROM users_wishlist WHERE user_id = ? AND link = ? and title = ?"
+                        , session["user_id"]
+                        , item['link']
+                        , item['title']
+                    )
+        
+        # Checks if item is already in wishlist, if yes does not add it
+        if len(row) > 0:
+            print("Already in wishlist")
+
+        else:
+            # Add Item To Wishlist
+            db.execute("INSERT INTO users_wishlist(user_id, title, price, retailer, link, img) VALUES (?, ?, ?, ?, ?, ?);"
+                        ,session["user_id"]
+                        ,item['title']
+                        ,item['price']
+                        ,item['retailer']
+                        ,item['link']
+                        ,item['img']
+                    )
+
+    except KeyError:
+        print('Invalid Data Received')
+
+    return render_template('results.html')
+
+
 @app.route("/remove", methods=["POST"])
 @login_required
 def remove():
@@ -168,23 +241,26 @@ def wishlist():
 @app.route('/settings')
 @login_required
 def settings():
+    ''' User's settings route'''
 
-    return render_template('settings.html')
+    # Base user preference value
+    pref = 1
+    # Gets user preference (whether user want their history to be recorded or not)
+    user_pref = db.execute("SELECT record_history FROM users WHERE id = ?;", session['user_id'])
+
+    # If a record was returned assigned the user's preference value to pref variable
+    if len(user_pref) == 1:
+        pref = user_pref[0]['record_history']
+
+    return render_template('settings.html', pref=pref)
 
 
 @app.route('/deleteHistory', methods=['POST'])
 @login_required
 def deleteHistory():
 
-    confirmation = request.get_json()
-    
-    try:
-        confirmation = confirmation['delete']
-        if confirmation == 'ok':
-            db.execute("DELETE FROM users_history WHERE user_id = ?;", session['user_id'])
-    
-    except KeyError:
-        print('Invalid Key For Delete')
+    ''' DELETES USER'S HISTORY '''
+    db.execute("DELETE FROM users_history WHERE user_id = ?;", session['user_id'])
 
     return render_template('settings.html')
 
