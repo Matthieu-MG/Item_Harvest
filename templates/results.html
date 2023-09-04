@@ -88,7 +88,7 @@
                       </p>
                       <p class="card-text price">{{ currency }} 
                         {% if item.local_price %}
-                            {{ item.local_price }}</p>
+                            {{ item.local_price | formatPrice }}</p>
                         {% else %}
                             {{ item.price }}
                         {% endif %}

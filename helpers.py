@@ -83,7 +83,7 @@ def getLocalCurrency(items):
             rate = user_currency['rate']
             
             for item in items:
-                item['local_price'] = str(float(item['price']) * rate)
+                item['local_price'] = float(item['price']) * rate
 
     except KeyError:
         print("Does not have a country assigned")
@@ -92,6 +92,9 @@ def getLocalCurrency(items):
         'currency': currency,
         'results': items
     }
+
+def formatPrice(value):
+    return f"{value:.2f}"
 
 def EbayFind(query):
 

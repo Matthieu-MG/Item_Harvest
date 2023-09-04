@@ -1,6 +1,6 @@
 from flask import Flask, render_template, request, redirect, session, url_for
 from cs50 import SQL
-from helpers import login_required, getCurrency,  EbayFind, EtsyFind, getCountry, getLocalCurrency
+from helpers import login_required, getCurrency,  EbayFind, EtsyFind, getCountry, getLocalCurrency, formatPrice
 from flask_session import Session
 from werkzeug.security import generate_password_hash, check_password_hash
 import os
@@ -25,6 +25,8 @@ EbayFindByID(legos[0]['id'])
 '''
 
 app = Flask("__name__")
+
+app.jinja_env.filters["formatPrice"] = formatPrice
 
 # Setting up database in app.py
 db = SQL("sqlite:///webApp.db")

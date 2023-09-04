@@ -7,7 +7,7 @@
 {% block main %}
     <div class="container justify-content text-centered">
         <h3 class="text-white">Your Items' Wishlist</h3>
-        <h2 class="text-white" id="total">Total: 000</h2>
+        <h2 class="text-white" id="total">Total: <span class="currency">{{ currency }}</span> 000</h2>
     </div>
     <div class="container">
         <div class="row gy-3 my-3" id="main">
@@ -26,9 +26,9 @@
                             </span>
                             <span class="amount">
                                 {% if item.local_price %}
-                                    {{item.local_price}}
+                                    {{ item.local_price | formatPrice }}
                                 {% else %}
-                                    {{ item.price }}
+                                    {{ item.price | formatPrice }}
                                 {% endif %}
                             </span>
                         </p>
@@ -41,28 +41,36 @@
         </div>
     </div>
 
-    <script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bigdecimal/0.6.1/bigdecimal.min.js"></script>
 
+    <script>
+        
         // Calculates total from all items in wishlist and display on webpage
         let prices = Array.from(document.getElementsByClassName('price'));
-        total = 0;
+
+        total = new BigDecimal("0.00");
         prices.forEach(function(price){
-            amount = price.getElementsByClassName('amount')[0];
-            total += parseFloat(amount.innerHTML);
+
+            amount = price.getElementsByClassName('amount')[0].innerHTML;
+            amount = amount.trim();
+            amount = new BigDecimal(amount);
+            total = total.add(amount);
         });
 
+        let f_total = total.setScale(2, 4);
+
         let total_element = document.getElementById('total');
-        total_element.innerHTML = `Total: ${total}`;
+        let currency = total_element.getElementsByClassName('currency')[0].innerHTML.trim();
+        total_element.innerHTML = `Total: ${currency} ${f_total}`;
 
         // Function to decrement total by the item's price due to its removal
         function updateTotal(price)
         {
-            total -= price;
-            if (total <= 0)
-            {
-                total = 0;
-            }
-            total_element.innerHTML = `Total: ${total}`;
+            price = new BigDecimal(price.trim());
+            total = total.subtract(price);
+            let f_total = total.setScale(2, 4);
+
+            total_element.innerHTML = `Total: ${currency} ${f_total}`;
         }
 
         // Function to remove an item from wishlist in database and on the screen
@@ -81,7 +89,7 @@
                 // Gets price of item
                 let price = item.getElementsByClassName('price')[0];
                 price = price.getElementsByClassName('amount')[0];
-                price = parseFloat(price.innerHTML);
+                price = price.innerHTML;
                 // Updates total
                 updateTotal(price);
                 // Remove item from DOM

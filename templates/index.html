@@ -26,16 +26,18 @@
     <script>
 
         // Get user's location to show items' prices in local currency
-        navigator.geolocation.getCurrentPosition(function(position)
-        {
-            console.log(position.coords.longitude, position.coords.latitude);
-            $.ajax({
-                url: '/userLocation',
-                type: 'POST',
-                contentType: 'application/json',
-                data: JSON.stringify({ 'latitude' : position.coords.latitude, 'longitude' : position.coords.longitude})
-            })
-        });
+        {% if not session['user_country'] %}    
+            navigator.geolocation.getCurrentPosition(function(position)
+            {
+                console.log(position.coords.longitude, position.coords.latitude);
+                $.ajax({
+                    url: '/userLocation',
+                    type: 'POST',
+                    contentType: 'application/json',
+                    data: JSON.stringify({ 'latitude' : position.coords.latitude, 'longitude' : position.coords.longitude})
+                })
+            });
+        {% endif %}
 
         // Bool to check if autocomplete div was clicked
         let autoCompleteClicked = false;
