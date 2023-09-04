@@ -130,3 +130,13 @@ img
 {
   font-weight: bold;
 }
+
+.currency
+{
+  font-style: normal;
+}
+
+.amount
+{
+  font-style: normal;
+}

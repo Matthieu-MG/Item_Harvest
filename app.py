@@ -1,6 +1,6 @@
 from flask import Flask, render_template, request, redirect, session, url_for
 from cs50 import SQL
-from helpers import login_required, getCurrency,  EbayFind, EtsyFind
+from helpers import login_required, getCurrency,  EbayFind, EtsyFind, getCountry, getLocalCurrency
 from flask_session import Session
 from werkzeug.security import generate_password_hash, check_password_hash
 import os
@@ -77,6 +77,36 @@ def index():
     return render_template("index.html", history=history)
 
 
+@app.route("/userLocation", methods=["POST"])
+@login_required
+def userLocation():
+
+    # Gets user's location from client-side
+    response = request.get_json()
+
+    try:
+        # Gets coordinates from AJAX request's JSON data
+        longitude = response['longitude']
+        latitude = response['latitude']
+
+        # Calls API to get country at those coordinates
+        country = getCountry(longitude,latitude)
+
+        # If no country was returned
+        if not country:
+            print("Unable To Get Country From Coordinates")
+
+        # Else assign that country to the user's session
+        else:
+            session['user_country'] = country
+
+    # Handles exception in case longitude and latitude keys are not in the JSON data
+    except KeyError:
+        print("Invalid Data Received")
+
+    return redirect("/")
+
+
 @app.route("/searchResults", methods=["GET"])
 @login_required
 def searchResults():
@@ -102,8 +132,14 @@ def searchResults():
 
     # Search items via Ebay's Finding API
     s_results = EbayFind(query)
+    
+    # If user provided their location, provide local currency prices, else provides prices in USD
+    results_details = getLocalCurrency(s_results)
 
-    return render_template("results.html", s_results=s_results)
+    currency = results_details['currency']
+    s_results = results_details['results']
+
+    return render_template("results.html", s_results=s_results, currency=currency)
 
 
 @app.route('/enableDisableHistory', methods=["POST"])
@@ -234,8 +270,14 @@ def wishlist():
     # Gets all items from user's wishlist
     user_wishlist = db.execute("SELECT * FROM users_wishlist WHERE user_id = ?;", session["user_id"])
 
+    # If user provided their location calculate local currency, else returns prices in USD
+    results_details = getLocalCurrency(user_wishlist)
+
+    currency = results_details['currency']
+    user_wishlist = results_details['results']
+
     # Renders wishlist page and passes in the user's wishlist
-    return render_template("wishlist.html", user_wishlist=user_wishlist)
+    return render_template("wishlist.html", user_wishlist=user_wishlist, currency=currency)
     
 
 @app.route('/settings')

@@ -20,7 +20,18 @@
                         <p class="card-text">
                             <button class="btn btn-close-white btn-dark" onclick="remove('{{item.link}}')">Remove</button>
                         </p>
-                        <p class="card-text price">{{ item.price }}</p>
+                        <p class="card-text price">
+                            <span class="currency">
+                                {{ currency }}
+                            </span>
+                            <span class="amount">
+                                {% if item.local_price %}
+                                    {{item.local_price}}
+                                {% else %}
+                                    {{ item.price }}
+                                {% endif %}
+                            </span>
+                        </p>
                         <p class="card-text">{{ item.retailer }}</p>
                         <a href="{{ item.link }}" class="btn btn-primary">Link</a>
                     </div>
@@ -36,7 +47,8 @@
         let prices = Array.from(document.getElementsByClassName('price'));
         total = 0;
         prices.forEach(function(price){
-            total += parseFloat(price.innerHTML);
+            amount = price.getElementsByClassName('amount')[0];
+            total += parseFloat(amount.innerHTML);
         });
 
         let total_element = document.getElementById('total');
@@ -50,7 +62,7 @@
             {
                 total = 0;
             }
-            total_element.innerHTML = `total: ${total}`;
+            total_element.innerHTML = `Total: ${total}`;
         }
 
         // Function to remove an item from wishlist in database and on the screen
@@ -67,8 +79,9 @@
                 data: JSON.stringify({'item': link})
             }).done(function(){
                 // Gets price of item
-                let price = item.getElementsByClassName('price');
-                price = parseFloat(price[0].innerHTML);
+                let price = item.getElementsByClassName('price')[0];
+                price = price.getElementsByClassName('amount')[0];
+                price = parseFloat(price.innerHTML);
                 // Updates total
                 updateTotal(price);
                 // Remove item from DOM

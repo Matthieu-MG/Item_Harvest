@@ -86,7 +86,13 @@
                         <input type="checkbox" id="{{ item.link }}" value='{"title": "{{ item.title }}", "price": {{ item.price }}, "link": "{{ item.link }}", "retailer" : "{{ item.retailer}}", "img" : "{{ item.image }}"}' onchange="add_remove(this)">
                         <button class="btn btn-primary btn-sm" id="button{{ item.link }}" onclick="directAdd('{{ item.link }}', id)">Direct Add</button>
                       </p>
-                      <p class="card-text">{{ item.retailer }} : {{ item.price }}</p>
+                      <p class="card-text price">{{ currency }} 
+                        {% if item.local_price %}
+                            {{ item.local_price }}</p>
+                        {% else %}
+                            {{ item.price }}
+                        {% endif %}
+                      <p class="card-text">{{ item.retailer }}</p>
                       <a href="{{ item.link }}" class="btn btn-primary">Link</a>
                     </div>
                 </div>

@@ -45,6 +45,53 @@ def getCurrency(country):
         
     return None
 
+def getCountry(longitude, latitude):
+
+    # Get Open Cage's API Key and make request
+    api_key = os.getenv("OPEN_CAGE_API_KEY")
+    response = requests.get(f"https://api.opencagedata.com/geocode/v1/json?q={latitude}+{longitude}&key={api_key}&pretty=1")
+    try:
+        # If response code is ok
+        if response.status_code == 200:
+            # Converts JSON data to Dictionary
+            country = response.json()
+            try:
+                # Get country and return it
+                country = country['results'][0]['components']['country']
+                return country
+
+            # In case of invalid data or no country was found, handles exception
+            except KeyError:
+                print("Invalid Key")
+
+    # In case could not connect to Open Cage's API, handles exception
+    except ConnectionError:
+        print("Could not connect to API")
+
+    return None
+
+
+def getLocalCurrency(items):
+
+    # Currency to be displayed in webpage
+    currency = "USD"
+    try:
+        # If user allowed for their location to be known, calculate local price for each products
+        if session['user_country']:
+            user_currency = getCurrency(session['user_country'])
+            currency = user_currency['currency']
+            rate = user_currency['rate']
+            
+            for item in items:
+                item['local_price'] = str(float(item['price']) * rate)
+
+    except KeyError:
+        print("Does not have a country assigned")
+
+    return{
+        'currency': currency,
+        'results': items
+    }
 
 def EbayFind(query):
 
