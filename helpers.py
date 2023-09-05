@@ -3,6 +3,7 @@ import requests
 import json
 import os
 from functools import wraps
+from pycountry import countries
 
 def login_required(f):
     """
@@ -49,8 +50,8 @@ def getCountry(longitude, latitude):
 
     # Get Open Cage's API Key and make request
     api_key = os.getenv("OPEN_CAGE_API_KEY")
-    response = requests.get(f"https://api.opencagedata.com/geocode/v1/json?q={latitude}+{longitude}&key={api_key}&pretty=1")
     try:
+        response = requests.get(f"https://api.opencagedata.com/geocode/v1/json?q={latitude}+{longitude}&key={api_key}&pretty=1")
         # If response code is ok
         if response.status_code == 200:
             # Converts JSON data to Dictionary
@@ -65,6 +66,34 @@ def getCountry(longitude, latitude):
                 print("Invalid Key")
 
     # In case could not connect to Open Cage's API, handles exception
+    except ConnectionError:
+        print("Could not connect to API")
+
+    return None
+
+def getCountryByIP(ip_address):
+
+    # Load api key
+    api_key = os.getenv('IPIFY_API_KEY')
+
+    try:
+        # API request to ipify
+        response = requests.get(f'https://geo.ipify.org/api/v2/country?apiKey={api_key}&ipAddress={ip_address}')
+        # If response is ok
+        if response.status_code == 200:
+            data = response.json()
+
+            try:
+                # Retrieve country code from response
+                country_code = data['location']['country']
+                
+                # Get and return country name from pycountry library
+                country = countries.get(alpha_2=country_code)
+                return country.name
+
+            except KeyError:
+                print("Could not find country")
+
     except ConnectionError:
         print("Could not connect to API")
 
@@ -175,9 +204,8 @@ def EbayFind(query):
 
 
 def EtsyFind():
-    app_id = os.getenv('ETSY_API_KEY')
-    response = requests.get(f'https://openapi.etsy.com/v3/application/shops/{app_id}/listings/active/')
-
+    api_key = os.getenv('ETSY_API_KEY')
+    response = requests.get(f'https://openapi.etsy.com/v3/application/listings/active&x-api-key={api_key}&client_id=1')
     if response.status_code == 200:
         print(response.json())
 

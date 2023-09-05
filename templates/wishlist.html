@@ -57,10 +57,12 @@
             total = total.add(amount);
         });
 
+        // Formats total to 2 decimal places (2) via half-up rounding (4), for display on client side
         let f_total = total.setScale(2, 4);
 
         let total_element = document.getElementById('total');
         let currency = total_element.getElementsByClassName('currency')[0].innerHTML.trim();
+
         total_element.innerHTML = `Total: ${currency} ${f_total}`;
 
         // Function to decrement total by the item's price due to its removal
@@ -68,6 +70,8 @@
         {
             price = new BigDecimal(price.trim());
             total = total.subtract(price);
+
+            // Formats total to 2 decimal places (2) via half-up rounding (4), for display on client side
             let f_total = total.setScale(2, 4);
 
             total_element.innerHTML = `Total: ${currency} ${f_total}`;

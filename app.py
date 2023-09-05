@@ -1,6 +1,6 @@
 from flask import Flask, render_template, request, redirect, session, url_for
 from cs50 import SQL
-from helpers import login_required, getCurrency,  EbayFind, EtsyFind, getCountry, getLocalCurrency, formatPrice
+from helpers import login_required, getCurrency,  EbayFind, EtsyFind, getCountry, getLocalCurrency, formatPrice, getCountryByIP
 from flask_session import Session
 from werkzeug.security import generate_password_hash, check_password_hash
 import os
@@ -11,6 +11,7 @@ import json
 load_dotenv()
 # take environment variables from .env.
 
+# EtsyFind()
 # print(getCurrency('Mauritius'))
 # EbayFindByID('175811784059')
 '''
@@ -87,12 +88,9 @@ def userLocation():
     response = request.get_json()
 
     try:
-        # Gets coordinates from AJAX request's JSON data
-        longitude = response['longitude']
-        latitude = response['latitude']
 
-        # Calls API to get country at those coordinates
-        country = getCountry(longitude,latitude)
+        # Gets country via ip address sent from client-side
+        country = getCountryByIP(response['ip_address']['ip'])
 
         # If no country was returned
         if not country:

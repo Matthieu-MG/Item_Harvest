@@ -26,7 +26,7 @@
     <script>
 
         // Get user's location to show items' prices in local currency
-        {% if not session['user_country'] %}    
+        /*{% if not session['user_country'] %}    
             navigator.geolocation.getCurrentPosition(function(position)
             {
                 console.log(position.coords.longitude, position.coords.latitude);
@@ -37,6 +37,22 @@
                     data: JSON.stringify({ 'latitude' : position.coords.latitude, 'longitude' : position.coords.longitude})
                 })
             });
+        {% endif %}
+        */
+
+        // Gets user's IP address to display items' price in the user's local currency
+        {% if not session['user_country'] %}
+            fetch("https://api.ipify.org?format=json")
+            .then(response => response.json())
+            .then(data => {
+                
+                $.ajax({
+                    url: '/userLocation',
+                    type: 'POST',
+                    contentType: 'application/json',
+                    data: JSON.stringify({'ip_address' : data})
+                })
+            })
         {% endif %}
 
         // Bool to check if autocomplete div was clicked
