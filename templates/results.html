@@ -88,6 +88,34 @@
         {% endif %}
     </div>
 
+    {% if s_results|length > 0 %}
+    <div class="dropdown center">
+        <button class="btn btn-outline-info dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">filters</button>
+        <ul class="dropdown-menu">
+            <form class="dropdown-item" action="/searchResults" method="post">
+
+                <li class="dropdown-item">
+                        <input type="radio" class="btn btn-outline-warning" value="{{ s_results }}" name="sortPrice" placeholder="Sort Price">
+                        <span>Sort Price</span>
+                </li>
+
+                <li class="dropdown-item">
+                    <input type="radio" value="ascending" name="sortType"><span>Ascending</span>
+                </li>
+
+                <li class="dropdown-item">                
+                    <input type="radio" value="descending" name="sortType"><span>Descending</span>
+                </li>
+
+                <li class="dropdown-item">
+                    <button class="btn btn-warning" type="submit">Filter</button>
+                </li> 
+
+            </form>
+        </ul>
+    </div>
+    {% endif %}
+
     <div class="container">
         <div class="row gy-3 my-3">
             {% for item in s_results%}

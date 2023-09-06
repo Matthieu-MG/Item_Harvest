@@ -111,9 +111,45 @@ def userLocation():
     return redirect("/")
 
 
-@app.route("/searchResults", methods=["GET"])
+@app.route("/searchResults", methods=["GET","POST"])
 @login_required
 def searchResults():
+
+    if request.method == 'POST':
+        # Get existing search results
+        existing_search = request.form.get("sortPrice")
+        sortType = request.form.get("sortType")
+
+        # Get sorting type (asc or desc), default to ascending in case client did not specify or change radios' names on client-side
+        reverse = False
+        if sortType:
+            if sortType == "ascending":
+                reverse = False
+            elif sortType == "descending":
+                reverse = True
+
+        if existing_search:
+            try:
+                # Sanitize string to load into JSON format
+                existing_search = existing_search.replace("'",'"')
+                existing_search = existing_search.replace("\\","\\\\")
+
+                # Load search results into search as a list of dictionaries
+                search = json.loads(existing_search)
+                
+                try:
+                    # Sort search based on price value and renders to webpage
+                    s_results = sorted(search, key=lambda x: float(x['price']), reverse=reverse)
+                    currency = getLocalCurrency([])['currency']
+                    return render_template("results.html", s_results=s_results, currency=currency)
+                
+                except KeyError:
+                    return redirect("/")
+            
+            except json.decoder.JSONDecodeError:
+                return redirect("/")
+            
+        return redirect("/")
 
     # Gets query searches values
     query = request.args.get("query")
