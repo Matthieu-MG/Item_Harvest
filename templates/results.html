@@ -68,9 +68,24 @@
     </script>
 
     <div class="center lightpadding">
-        <button class="btn btn-success" onclick="addToWishlist()">
-            Add To Wishlist
-        </button>
+        <form action="/searchResults" method="get">
+            <div>
+                <input autocomplete="off" class="mx-auto w-auto text form-control-lg" id="searchInput" name="query" placeholder="Search" type="text">
+                <button class="invisble-button" hidden type="submit">Confirm</button>
+            </div>
+        </form>
+    </div>
+
+    <div class="container chop-chop">
+        {% if s_results|length < 1 %}
+        <div class="alert alert-warning text-center" role="alert">
+            No results found for your query !
+        </div>
+        {% else %}
+        <div class="alert alert-success text-center" role="alert">
+            Try searching with more keywords, if you are searching for something specifically.
+        </div>
+        {% endif %}
     </div>
 
     <div class="container">
@@ -83,7 +98,7 @@
                     <div class="card-body">
                       <h5 class="card-title">{{ item.title }}</h5>
                       <p class="card-text">
-                        <input type="checkbox" id="{{ item.link }}" value='{"title": "{{ item.title }}", "price": {{ item.price }}, "link": "{{ item.link }}", "retailer" : "{{ item.retailer}}", "img" : "{{ item.image }}"}' onchange="add_remove(this)">
+                        <input type="hidden" id="{{ item.link }}" value='{"title": "{{ item.title }}", "price": {{ item.price }}, "link": "{{ item.link }}", "retailer" : "{{ item.retailer}}", "img" : "{{ item.image }}"}' onchange="add_remove(this)">
                         <button class="btn btn-primary btn-sm" id="button{{ item.link }}" onclick="directAdd('{{ item.link }}', id)">Direct Add</button>
                       </p>
                       <p class="card-text price">{{ currency }} 

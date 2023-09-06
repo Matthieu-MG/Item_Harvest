@@ -1,6 +1,6 @@
 from flask import Flask, render_template, request, redirect, session, url_for
 from cs50 import SQL
-from helpers import login_required, getCurrency,  EbayFind, EtsyFind, getCountry, getLocalCurrency, formatPrice, getCountryByIP
+from helpers import login_required, getCurrency,  EbayFind, getCountry, getLocalCurrency, formatPrice, getCountryByIP, refreshExchangeRates
 from flask_session import Session
 from werkzeug.security import generate_password_hash, check_password_hash
 import os
@@ -33,13 +33,17 @@ app.jinja_env.filters["formatPrice"] = formatPrice
 db = SQL("sqlite:///webApp.db")
 
 # Configure session to use filesystem (instead of signed cookies)
-app.config["SESSION_PERMANENT"] = False
-app.config["SESSION_TYPE"] = "filesystem"
-Session(app)
+# app.config["SESSION_PERMANENT"] = False
+# app.config["SESSION_TYPE"] = "filesystem"
+app.config['SECRET_KEY'] = os.getenv('SECRET_KEY')
+# Session(app)
 
 # Used in development so that templates change on the page when their source code is changed
 app.config["TEMPLATES_AUTO_RELOAD"] = True
 app.config["SEND_FILE_MAX_AGE_DEFAULT"] = 0
+
+# Starts background task scheduler, to refresh exchange rates at 8AM and 8PM
+refreshExchangeRates()
 
 @app.after_request
 def after_request(response):
@@ -209,6 +213,7 @@ def directAdd():
     item = request.get_json()
     try:
         item = item['item']
+        print(item)
         item = json.loads(item)
 
         '''A CHECK IN CASE USER TRIES TO ENTER SAME PRODUCT EITHER NOTIFY USER OR INCREASE QUANTITY ?'''

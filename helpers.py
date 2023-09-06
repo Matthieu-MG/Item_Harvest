@@ -4,6 +4,7 @@ import json
 import os
 from functools import wraps
 from pycountry import countries
+from apscheduler.schedulers.background import BackgroundScheduler
 
 def login_required(f):
     """
@@ -19,20 +20,31 @@ def login_required(f):
     return decorated_function
 
 
+def updateExchangeRates():
+    # Gets current currency values via the open exchange rates api
+    print("Updating...")
+    parameters = {"app_id" : os.getenv("OER_API_KEY")}
+    response = requests.get('https://openexchangerates.org/api/latest.json', params=parameters)
+    data = response.json()
+    with open('data.json', 'w') as file:
+        json.dump(data, file)
+    print("...Completed")
+
+
+def refreshExchangeRates():
+    scheduler = BackgroundScheduler()
+    scheduler.add_job(updateExchangeRates, 'cron', hour="8,20")
+    scheduler.start()
+    print("Schedule Started")
+
+
 def getCurrency(country):
 
     if not os.path.isfile('data.json'):
+        updateExchangeRates()
 
-        # Gets current currency values via the open exchange rates api
-        parameters = {"app_id": os.getenv("OER_API_KEY")}
-        response = requests.get('https://openexchangerates.org/api/latest.json', params=parameters)
-        data = response.json()
-        with open('data.json', 'w') as file:
-            json.dump(data, file)
-
-    else:
-        with open('data.json', 'r') as file:
-            data = json.load(file)
+    with open('data.json', 'r') as file:
+        data = json.load(file)
 
     response = requests.get(f'https://restcountries.com/v3.1/name/{country}/')
     if response.status_code == 200:
@@ -161,6 +173,8 @@ def EbayFind(query):
                         # Gets the item's information
                         itemId = item['itemId'][0]
                         title  = item['title'][0]
+                        title = title.replace('"','')
+                        title = title.replace("'","")
                         image = item['galleryURL'][0]
                         item_URL = item['viewItemURL'][0]
 
@@ -196,7 +210,8 @@ def EbayFind(query):
                 return [] 
             
         # If status code is not 200 returns an empty list
-        return []
+        else:
+            return []      
     
     # Handles case where could not connect to API
     except ConnectionError:
