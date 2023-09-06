@@ -5,7 +5,13 @@
 {% endblock %}
 
 {% block main %}
-    <div class="center lightpadding hx-50">
+    <div class="text-center text-light-gray custom-py-3 welcome">
+        <h3>    
+            Search for items and add them to your Harvest.
+        </h3>
+    </div>
+
+    <div class="center hx-50">
         <form action="/searchResults" method="get">
             <div>
                 <input autocomplete="off" class="mx-auto w-auto text form-control-lg" id="searchInput" name="query" placeholder="Search" type="text">
@@ -21,17 +27,7 @@
                 <button class="invisble-button" hidden type="submit">Confirm</button>
             </div>
         </form>
-    </div>
-
-    <div class="row">
-        
-    </div>
-    <div class="col-6 col-sm-12">
-        You can use the search bar to search for items
-    </div>
-    <div class="col-6 col-sm-12">
-
-    </div>
+    </div>    
 
     <script>
 

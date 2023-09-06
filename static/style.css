@@ -69,7 +69,7 @@ img
 
 .lightpadding
 {
-  padding-top: 40px;
+  padding-top: 20px; /* 40px */
   padding-bottom: 20px;
 }
 
@@ -139,4 +139,24 @@ img
 .amount
 {
   font-style: normal;
+}
+
+.welcome
+{
+  font-family: 'Brush Script MT', cursive;
+}
+
+.custom-py-3
+{
+  padding-top: 1rem !important;
+}
+
+.text-light-gray
+{
+  color: #f0f0f0;
+}
+
+.div-transparent-bg
+{
+  background-color: #f0f0f0a5;
 }
