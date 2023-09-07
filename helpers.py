@@ -227,3 +227,60 @@ def EtsyFind():
     else:
         print(response)
         print('not ok')
+
+
+def EbayFindByKeyword(query, results):
+    app_id = os.getenv("EBAY_SB_API_KEY")
+
+    # Makes API Request to EBAY
+    response = requests.get(f"https://svcs.ebay.com/services/search/FindingService/v1?OPERATION-NAME=findItemsByKeywords" \
+            f"&SERVICE-VERSION=1.7.0" \
+            f"&SECURITY-APPNAME={app_id}" \
+            f"&RESPONSE-DATA-FORMAT=JSON" \
+            f"&REST-PAYLOAD"\
+            f"&keywords={query}")
+    
+    if response.status_code == 200:
+        data = response.json()
+        try:
+                #print(data)
+                data = data['findItemsByKeywordsResponse'][0]['searchResult'][0]
+                for item in data['item']:
+                    new = True
+                    for result in results:
+                        if item['viewItemURL'][0] == result['link']:
+                            print("Not new")
+                            new = False
+
+                    if new == True:
+                        # Gets the item's information
+                        itemId = item['itemId'][0]
+                        title  = item['title'][0]
+                        title = title.replace('"','')
+                        title = title.replace("'","")
+                        image = item['galleryURL'][0]
+                        item_URL = item['viewItemURL'][0]
+
+                        sellingStatus = item['sellingStatus'][0]
+                        state = sellingStatus['sellingState'][0]
+                        pricing = sellingStatus['currentPrice']
+                        currency = pricing[0]['@currencyId']
+                        price = pricing[0]['__value__']
+
+                        newItem = {
+                            "title" : title,
+                            "id" : itemId,
+                            "image" : image,
+                            "link" : item_URL,
+                            "state" : state,
+                            "currency" : currency,
+                            "price" : price,
+                            "retailer" : 'ebay'
+                        }
+                        results.append(newItem)
+                    print()
+
+                return results
+                
+        except KeyError:
+            print("No key bru")

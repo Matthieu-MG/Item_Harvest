@@ -1,6 +1,6 @@
 from flask import Flask, render_template, request, redirect, session, url_for
 from cs50 import SQL
-from helpers import login_required, getCurrency,  EbayFind, getCountry, getLocalCurrency, formatPrice, getCountryByIP, refreshExchangeRates
+from helpers import login_required, getCurrency,  EbayFind, getCountry, getLocalCurrency, formatPrice, getCountryByIP, refreshExchangeRates, EbayFindByKeyword
 from flask_session import Session
 from werkzeug.security import generate_password_hash, check_password_hash
 import os
@@ -24,6 +24,8 @@ for lego in legos:
 
 EbayFindByID(legos[0]['id'])
 '''
+# results = EbayFind("lego")
+# EbayFindByKeyword("lego", results)
 
 app = Flask("__name__")
 
@@ -172,6 +174,7 @@ def searchResults():
 
     # Search items via Ebay's Finding API
     s_results = EbayFind(query)
+    s_results = EbayFindByKeyword(query, s_results)
     
     # If user provided their location, provide local currency prices, else provides prices in USD
     results_details = getLocalCurrency(s_results)
@@ -358,19 +361,18 @@ def login():
 
         # If password or username is null
         if not password or not username:
-            return redirect("/login")
+            message = "Login Error: Fields Missing"
+            return render_template("login.html", message=message)
         
         # Get user's record in database
         user_record = db.execute("SELECT * FROM users WHERE username = ?", username)
         # If returned record is null or greater than 2, redirect user to same page
         if len(user_record) != 1:
-            print("USER DOES NOT EXIST")
-            return redirect("/login")
+            return render_template("login.html", message="Login Error: User Does Not Exist")
 
         # If password hash in database does not match password posted, redirect user to login page
         if not check_password_hash(user_record[0]["hash"], password):
-            print("INCORRECT PASSWORD")
-            return redirect("/login")
+            return render_template("login.html", message="Login Error: Incorrect Password")
         
         # Assigns session to the user
         session["user_id"] = user_record[0]["id"]
@@ -402,16 +404,16 @@ def register():
 
         # If any of those values are null, redirect to /register route
         if not username or not password or not confirmation:
-            return redirect("/register")
+            return render_template("register.html", message="Register Error: Missing Fields")
         
         # If password does not match confirmation redirect to /register route
         if password != confirmation:
-            return redirect("/register")
+            return render_template("register.html", message="Register Error: Passwords Do Not Match")
         
         # Checks if record with same username already exists, if yes redirect user
         row = db.execute("SELECT * FROM users WHERE username = ?;", username)
         if len(row) > 0:
-            return redirect("/register")
+            return render_template("register.html", message="Register Error: Username Already Exists")
         
         # Generate hash and insert new user into database
         hash_pw = generate_password_hash(password)

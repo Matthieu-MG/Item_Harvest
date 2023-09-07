@@ -11,6 +11,13 @@
 
                 <div class="card custom-form">
                     <div class="card-body">
+
+                    {% if message %}
+                    <div class="alert alert-danger text-center chop-chop">
+                        {{ message }}
+                    </div>
+                    {% endif %}
+
                     <h5 class="card-title text-center">Welcome To Item Harvest</h5>
                     
                     <p class="card-text">
