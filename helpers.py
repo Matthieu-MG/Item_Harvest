@@ -249,7 +249,6 @@ def EbayFindByKeyword(query, results):
                     new = True
                     for result in results:
                         if item['viewItemURL'][0] == result['link']:
-                            print("Not new")
                             new = False
 
                     if new == True:

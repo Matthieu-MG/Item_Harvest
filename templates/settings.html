@@ -5,7 +5,7 @@
 {% endblock %}
 
 {% block main %}
-    <div class="div-transparent-bg container-lg" style="height: 80vh">
+    <div class="div-transparent-bg container-lg chop-chop" style="height: 80vh">
         <div class="row">
             <div class="col-lg-2 col-sm-12 py-3 text-center fw-bolder">
                     Settings
@@ -13,24 +13,24 @@
             <div class="col-lg-10 col-sm-12 py-3 justify-content-center ">
                 
                 <div class="fw-bold">
-                    <u>
+                    <u class="settings-color">
                         Privacy
                     </u>
                 </div>
 
-                <div class="">
+                <div class="rich-charcoal">
                     Delete Your Search History:
-                    <button class="btn btn-sm btn-warning ms-2" id="delete" onclick="send(id, '/deleteHistory')">DELETE HISTORY</button>
+                    <button class="btn btn-sm btn-warning rounded-2 ms-2" id="delete" onclick="send(id, '/deleteHistory')">DELETE HISTORY</button>
                 </div>
 
-                <div class="py-3">
+                <div class="py-3 rich-charcoal">
                     {% if pref == 1 %}
                         Disable
                     {% else %}
                         Enable
                     {% endif %}
                     History Records:
-                    <button class="btn btn-sm btn-info ms-2" id="disable" onclick="send(id, '/enableDisableHistory')">
+                    <button class="btn btn-sm btn-info rounded-2 ms-2" id="disable" onclick="send(id, '/enableDisableHistory')">
                         {% if pref == 1 %}
                             DISABLE
                         {% else %}
@@ -40,17 +40,25 @@
                 </div>
 
                 <div class="fw-bold">
-                    <u>
+                    <u class="settings-color">
                         User Settings
                     </u>
                 </div>
 
-                <div class="">
+                <div class="rich-charcoal">
                     <label>Change Password: </label>
                     <div>
-                        <input placeholder="Previous Password" type="password">
-                        <input placeholder="New Password" type="password">
-                        <button class="btn btn-sm btn-info ms-2" onclick="">Submit</button>
+                        <form action="/changePassword" method="POST">
+                            <div class="form-floating py-2 short-input">
+                                <input name="currentPassword" id="currentPw" class="form-control" type="password">
+                                <label for="currentPw">Current Password</label>
+                            </div>
+                            <div class="form-floating py-2">
+                                <input name="newPassword" id="newPw" class="form-control" type="password">
+                                <label for="newPw">New Password</label>
+                            </div>
+                            <button class="btn btn-sm btn-info rounded-2  ms-2" type="submit">Change Password</button>
+                        </form>
                     </div>
                 </div>
 

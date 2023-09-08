@@ -54,7 +54,10 @@
 
     <body>
 
-        <button type="button" class="btn btn-danger btn-floating btn-lg" id="btn-back-to-top">
+        <button type="button" class="btn btn-light btn-floating btn-lg" id="btn-back-to-top">
+            <i>
+                <img src="static/up-arrow-svgrepo-com.svg" class="svg-img" alt="back-to-top icon">
+            </i>
         </button>
 
         <img src="static/iStock-865867552(3).jpg" class="bg-img">
@@ -98,5 +101,12 @@
         <main>
             {% block main %}{% endblock %}
         </main>
+
+        <footer class="footer-banner">
+            <div class="container footer-div container-footer container-fluid">
+                <span class="text-white" style="text-align: left;">Date Provided by <a href="https://www.ebay.com">Ebay</a></span>
+                <span class="text-white px-2 mx-2" style="text-align: right;">Background Image by <a href="https://www.istockphoto.com/portfolio/Nikada?mediatype=photography">Nikada</a></span>
+            </div>
+        </footer>
     </body>
 </html>

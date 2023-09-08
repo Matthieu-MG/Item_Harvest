@@ -81,10 +81,16 @@ img
 #btn-back-to-top
 {
   position: fixed;
-  bottom: 20px;
-  right: 20px;
+  bottom: 5rem;
+  right: 1rem;
   display: none;
   z-index: 2;
+}
+
+.svg-img
+{
+  width: 3rem;
+  height: 3rem;
 }
 
 .searchbox
@@ -159,4 +165,50 @@ img
 .div-transparent-bg
 {
   background-color: #f0f0f0a5;
+}
+
+.short-input
+{
+  margin-right: auto;
+}
+
+.round-btn
+{
+  border-radius: 10%;
+}
+
+.settings-color
+{
+  color: #333333;
+}
+
+.rich-charcoal
+{
+  color: #333344;
+}
+
+.footer-banner
+{
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+  overflow-y: auto;
+}
+
+.footer-div
+{
+  max-width: 100%;
+  background-color: #333333;
+}
+
+.container-footer
+{
+  display: flex;
+  justify-content: space-between;
+}
+
+.padding-footer
+{
+  padding-top: 2rem;
+  padding-bottom: 2rem;
 }

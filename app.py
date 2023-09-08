@@ -174,7 +174,6 @@ def searchResults():
 
     # Search items via Ebay's Finding API
     s_results = EbayFind(query)
-    s_results = EbayFindByKeyword(query, s_results)
     
     # If user provided their location, provide local currency prices, else provides prices in USD
     results_details = getLocalCurrency(s_results)
@@ -349,6 +348,28 @@ def deleteHistory():
     db.execute("DELETE FROM users_history WHERE user_id = ?;", session['user_id'])
 
     return render_template('settings.html')
+
+
+@app.route('/changePassword', methods=['POST'])
+@login_required
+def changePassword():
+    current_pw = request.form.get("currentPassword")
+    new_pw = request.form.get("newPassword")
+
+    if not current_pw or not new_pw:
+        print("missing pw")
+        return redirect("/settings")
+    
+    row = db.execute("SELECT hash FROM users WHERE id = ?;", session['user_id'])
+    if len(row)!= 1 or not check_password_hash(row[0]['hash'], current_pw):
+        print("user not found or not same password")
+        return redirect("/settings")
+    
+    hash = generate_password_hash(new_pw)
+    db.execute("UPDATE users SET hash = ? WHERE id = ?;", hash, session['user_id'])
+    print("success")
+    return redirect("/settings")
+    
 
 @app.route("/login", methods=["GET", "POST"])
 def login():
