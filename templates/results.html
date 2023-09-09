@@ -7,62 +7,34 @@
 {% block main %}
     
     <script>
-
-        // Stores all the items checked by user
-        items_added = []
-
-        // Sends all of the items in items_added to server and redirects to /wishlist route
-        function addToWishlist(){
-            $.ajax({
-                url: '/add',
-                type: 'POST',
-                contentType: 'application/json',
-                data: JSON.stringify({ 'wishlist': items_added}),
-            }).done(function(data){
-                window.location.href = '/wishlist'
-            })
-        }
-        
-        function add_remove(checkbox){
-
-            // Gets item's id
-            let item = checkbox.value
-            if (checkbox.checked){
-
-                console.log("adding to array")
-                // adds item to end of array
-                items_added.push(item)
-                console.log(items_added)
-
-            }
-            else{
-
-                // Gets index of item's id in array
-                const index = items_added.indexOf(item)
-
-                // If id is in items_added array, remove it
-                if (index > -1){
-
-                    // The second parameter means remove only one
-                    items_added.splice(index, 1)
-                }
-                console.log("unchecked")
-            }
-        }
-
-        function directAdd(id, btn_id)
+        function updateItem(id, btn_id, consequent_btn_id, route, link)
         {
+            // Gets elements hidden input, and buttons
             let item = document.getElementById(id)
             let button = document.getElementById(btn_id)
+            let consequentBtn = document.getElementById(consequent_btn_id)
 
+            // Stores data to be sent to server and what the innerHTML of the buttons should be
+            let data_sent = item.value;
+            let btn_content = ['Added', 'Remove']
+            // Stores /remove route data if the route is not '/directAdd'
+            if(route == '/remove')
+            {
+                data_sent = link;
+                btn_content = ['Removed', 'Add']
+            }
+
+            // AJAX request to perform either add or remove operations of the wishlist and update buttons' innerHTML when done
             $.ajax({
-                url: '/directAdd',
+                url: route,
                 type: 'POST',
                 contentType: 'application/json',
-                data: JSON.stringify({ 'item': item.value })
+                data: JSON.stringify({ 'item': data_sent })
             }).done(function(){
                 button.disabled = true;
-                button.innerHTML = 'Added';
+                button.innerHTML = btn_content[0];
+                consequentBtn.innerHTML = btn_content[1];
+                consequentBtn.disabled = false;
             })
         }
     </script>
@@ -126,8 +98,9 @@
                     <div class="card-body">
                       <h5 class="card-title">{{ item.title }}</h5>
                       <p class="card-text">
-                        <input type="hidden" id="{{ item.link }}" value='{"title": "{{ item.title }}", "price": {{ item.price }}, "link": "{{ item.link }}", "retailer" : "{{ item.retailer}}", "img" : "{{ item.image }}"}' onchange="add_remove(this)">
-                        <button class="btn btn-primary btn-sm" id="button{{ item.link }}" onclick="directAdd('{{ item.link }}', id)">Direct Add</button>
+                        <input type="hidden" id="{{ item.link }}" value='{"title": "{{ item.title }}", "price": {{ item.price }}, "link": "{{ item.link }}", "retailer" : "{{ item.retailer}}", "img" : "{{ item.image }}"}'>
+                        <button class="btn btn-primary btn-sm" id="button{{ item.link }}" onclick="updateItem('{{ item.link }}', id, 'remove{{item.link}}', '/directAdd', '{{ item.link }}')">Add</button>
+                        <button class="btn btn-dark btn-sm" disabled id="remove{{ item.link }}" onclick="updateItem('{{ item.link }}', id, 'button{{ item.link }}', '/remove', '{{ item.link }}')">Remove</button>
                       </p>
                       <p class="card-text price">{{ currency }} 
                         {% if item.local_price %}

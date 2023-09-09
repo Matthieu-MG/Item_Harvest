@@ -249,34 +249,39 @@ def add():
 def directAdd():
     ''' Route to directly add an item to the wishlist '''
     item = request.get_json()
+
     try:
         item = item['item']
         print(item)
         item = json.loads(item)
 
-        '''A CHECK IN CASE USER TRIES TO ENTER SAME PRODUCT EITHER NOTIFY USER OR INCREASE QUANTITY ?'''
-        row = db.execute("SELECT * FROM users_wishlist WHERE user_id = ? AND link = ? and title = ?"
-                        , session["user_id"]
-                        , item['link']
-                        , item['title']
-                    )
+        try:
+            '''A CHECK IN CASE USER TRIES TO ENTER SAME PRODUCT EITHER NOTIFY USER OR INCREASE QUANTITY ?'''
+            row = db.execute("SELECT * FROM users_wishlist WHERE user_id = ? AND link = ? and title = ?"
+                            , session["user_id"]
+                            , item['link']
+                            , item['title']
+                        )
+            
+            # Checks if item is already in wishlist, if yes does not add it
+            if len(row) > 0:
+                print("Already in wishlist")
+
+            else:
+                # Add Item To Wishlist
+                db.execute("INSERT INTO users_wishlist(user_id, title, price, retailer, link, img) VALUES (?, ?, ?, ?, ?, ?);"
+                            ,session["user_id"]
+                            ,item['title']
+                            ,item['price']
+                            ,item['retailer']
+                            ,item['link']
+                            ,item['img']
+                        )
         
-        # Checks if item is already in wishlist, if yes does not add it
-        if len(row) > 0:
-            print("Already in wishlist")
+        except KeyError:
+            print('Invalid Data Received')
 
-        else:
-            # Add Item To Wishlist
-            db.execute("INSERT INTO users_wishlist(user_id, title, price, retailer, link, img) VALUES (?, ?, ?, ?, ?, ?);"
-                        ,session["user_id"]
-                        ,item['title']
-                        ,item['price']
-                        ,item['retailer']
-                        ,item['link']
-                        ,item['img']
-                    )
-
-    except KeyError:
+    except json.decoder.JSONDecodeError:
         print('Invalid Data Received')
 
     return render_template('results.html')
@@ -286,6 +291,7 @@ def directAdd():
 @login_required
 def remove():
 
+    print('in /remove')
     # Gets item to be removed from wishlist
     item = request.get_json()
     try:
@@ -296,6 +302,7 @@ def remove():
         # If it is remove it
         if len(row) == 1:
             db.execute("DELETE FROM users_wishlist WHERE id = ?;", row[0]['id'])
+            print('Success removing')
             
         else:
             print('error finding item in wishlist')
