@@ -35,6 +35,9 @@
                 button.innerHTML = btn_content[0];
                 consequentBtn.innerHTML = btn_content[1];
                 consequentBtn.disabled = false;
+            }).fail(function()
+            {
+                console.log('failure')
             })
         }
     </script>
@@ -99,7 +102,7 @@
                       <h5 class="card-title">{{ item.title }}</h5>
                       <p class="card-text">
                         <input type="hidden" id="{{ item.link }}" value='{"title": "{{ item.title }}", "price": {{ item.price }}, "link": "{{ item.link }}", "retailer" : "{{ item.retailer}}", "img" : "{{ item.image }}"}'>
-                        <button class="btn btn-primary btn-sm" id="button{{ item.link }}" onclick="updateItem('{{ item.link }}', id, 'remove{{item.link}}', '/directAdd', '{{ item.link }}')">Add</button>
+                        <button class="btn btn-primary btn-sm add_btn" id="button{{ item.link }}" onclick="updateItem('{{ item.link }}', id, 'remove{{item.link}}', '/directAdd', '{{ item.link }}')">Add</button>
                         <button class="btn btn-dark btn-sm" disabled id="remove{{ item.link }}" onclick="updateItem('{{ item.link }}', id, 'button{{ item.link }}', '/remove', '{{ item.link }}')">Remove</button>
                       </p>
                       <p class="card-text price">{{ currency }} 
@@ -117,4 +120,29 @@
             {% endfor %}
         </div>
     </div>
+
+    <script>
+        // Stores user's wishlist items' url in an array
+        let u_w = JSON.parse('{{ urls_in_wishlist | safe }}');
+
+        // Gets an array of all add buttons
+        let add_buttons = Array.from(document.getElementsByClassName('add_btn'));
+
+        // Iterates through all the add buttons
+        add_buttons.forEach(function(button)
+        {
+            // If button id (that contains item url) is in user's wishlist array
+            if (u_w.includes(button.id))
+            {
+                // Get remove button, disable Add button and enable remove button
+                let removeBtn = button.nextElementSibling;
+
+                button.innerHTML = 'Added';
+                button.disabled = true;
+
+                removeBtn.disabled = false;
+
+            }
+        });
+    </script>
 {% endblock %}

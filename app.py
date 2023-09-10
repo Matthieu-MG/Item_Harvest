@@ -117,6 +117,28 @@ def userLocation():
 @login_required
 def searchResults():
 
+    # Gets user's url links for items in user's wishlist
+    items_in_wishlist = db.execute("SELECT link FROM users_wishlist WHERE user_id = ?;", session['user_id'])
+
+    # List to store all formatted urls of items in user's wishlist
+    urls_in_wishlist = []
+    try:
+        for url in items_in_wishlist:
+            # Format urls to match buttons id in results.html's DOM
+            link = url['link']
+            link = link.replace("\\", "\\\\")
+            urls_in_wishlist.append(f"button{link}")
+    except KeyError:
+        print('No Key "link" in list')
+    
+    # Tries to make list into correct JSON format for parsing
+    try:
+        urls_in_wishlist = json.dumps(urls_in_wishlist)
+
+    # Catches error that may occur when Parsing
+    except (json.decoder.JSONDecodeError, TypeError) as e:
+        print(f"An error occurred while serializing: {e}")
+
     if request.method == 'POST':
         # Get existing search results
         existing_search = request.form.get("sortPrice")
@@ -143,7 +165,7 @@ def searchResults():
                     # Sort search based on price value and renders to webpage
                     s_results = sorted(search, key=lambda x: float(x['price']), reverse=reverse)
                     currency = getLocalCurrency([])['currency']
-                    return render_template("results.html", s_results=s_results, currency=currency)
+                    return render_template("results.html", s_results=s_results, currency=currency, urls_in_wishlist=urls_in_wishlist)
                 
                 except KeyError:
                     return redirect("/")
@@ -181,7 +203,7 @@ def searchResults():
     currency = results_details['currency']
     s_results = results_details['results']
 
-    return render_template("results.html", s_results=s_results, currency=currency)
+    return render_template("results.html", s_results=s_results, currency=currency, urls_in_wishlist=urls_in_wishlist)
 
 
 @app.route('/enableDisableHistory', methods=["POST"])
@@ -254,7 +276,7 @@ def directAdd():
         item = item['item']
         print(item)
         item = json.loads(item)
-
+        
         try:
             '''A CHECK IN CASE USER TRIES TO ENTER SAME PRODUCT EITHER NOTIFY USER OR INCREASE QUANTITY ?'''
             row = db.execute("SELECT * FROM users_wishlist WHERE user_id = ? AND link = ? and title = ?"
@@ -277,7 +299,7 @@ def directAdd():
                             ,item['link']
                             ,item['img']
                         )
-        
+                
         except KeyError:
             print('Invalid Data Received')
 
