@@ -1,6 +1,9 @@
 body{
   margin: 0;
   overflow-x: hidden;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
 }
 
 .card
@@ -189,16 +192,14 @@ img
 
 .footer-banner
 {
-  position: fixed;
-  bottom: 0;
+  margin-top: auto; /**/
   width: 100%;
-  overflow-y: auto;
 }
 
 .footer-div
 {
   max-width: 100%;
-  background-color: #333333;
+  background-color: #90c46c; /*333333*/
 }
 
 .container-footer
@@ -207,8 +208,20 @@ img
   justify-content: space-between;
 }
 
-.padding-footer
+.footer-text
 {
-  padding-top: 2rem;
-  padding-bottom: 2rem;
+  color: #333;
+}
+
+.credits-link
+{
+  color: #333;
+}
+
+@media (min-width: 429px)
+{
+  .footer-padding
+  {
+    padding-bottom: 2rem;
+  }
 }
