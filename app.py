@@ -352,7 +352,7 @@ def wishlist():
     return render_template("wishlist.html", user_wishlist=user_wishlist, currency=currency)
     
 
-@app.route('/settings')
+@app.route('/settings', methods=['GET','POST'])
 @login_required
 def settings():
     ''' User's settings route'''
@@ -366,6 +366,30 @@ def settings():
     if len(user_pref) == 1:
         pref = user_pref[0]['record_history']
 
+    # If trying to change passwords
+    if request.method == 'POST':
+            
+            # Get passwords values
+            current_pw = request.form.get("currentPassword")
+            new_pw = request.form.get("newPassword")
+
+            # If password fields were not filled, warn user
+            if not current_pw or not new_pw:
+                print("missing pw")
+                return render_template("settings.html", alert="Missing Password", pref=pref)
+            
+            # If no records of the user are found, or current password in db and current_pw do not match, warn user
+            row = db.execute("SELECT hash FROM users WHERE id = ?;", session['user_id'])
+            if len(row)!= 1 or not check_password_hash(row[0]['hash'], current_pw):
+                print("user not found or not same password")
+                return render_template("settings.html", alert="User Not Found or Incorrect Current Password", pref=pref)
+            
+            # Generate new hash and store it in db, alert user that operation was a success
+            hash = generate_password_hash(new_pw)
+            db.execute("UPDATE users SET hash = ? WHERE id = ?;", hash, session['user_id'])
+            print("success")
+            return render_template("settings.html", success="Succesfully Changed Password", pref=pref)
+
     return render_template('settings.html', pref=pref)
 
 
@@ -377,27 +401,6 @@ def deleteHistory():
     db.execute("DELETE FROM users_history WHERE user_id = ?;", session['user_id'])
 
     return render_template('settings.html')
-
-
-@app.route('/changePassword', methods=['POST'])
-@login_required
-def changePassword():
-    current_pw = request.form.get("currentPassword")
-    new_pw = request.form.get("newPassword")
-
-    if not current_pw or not new_pw:
-        print("missing pw")
-        return redirect("/settings")
-    
-    row = db.execute("SELECT hash FROM users WHERE id = ?;", session['user_id'])
-    if len(row)!= 1 or not check_password_hash(row[0]['hash'], current_pw):
-        print("user not found or not same password")
-        return redirect("/settings")
-    
-    hash = generate_password_hash(new_pw)
-    db.execute("UPDATE users SET hash = ? WHERE id = ?;", hash, session['user_id'])
-    print("success")
-    return redirect("/settings")
     
 
 @app.route("/login", methods=["GET", "POST"])

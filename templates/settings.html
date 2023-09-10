@@ -46,9 +46,18 @@
                 </div>
 
                 <div class="rich-charcoal">
-                    <label>Change Password: </label>
+                    <label style="padding-bottom: 1rem;">Change Password: </label>
+                    {% if alert %}
+                    <div class="alert alert-danger py-2">
+                        {{ alert }}
+                    </div>
+                    {% elif success %}
+                    <div class="alert alert-success py-2">
+                        {{ success }}
+                    </div>
+                    {% endif %}
                     <div>
-                        <form action="/changePassword" method="POST">
+                        <form action="/settings" method="POST">
                             <div class="form-floating py-2 short-input">
                                 <input name="currentPassword" id="currentPw" class="form-control" type="password">
                                 <label for="currentPw">Current Password</label>
