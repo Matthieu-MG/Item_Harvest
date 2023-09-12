@@ -8,24 +8,8 @@ from dotenv import load_dotenv
 import requests
 import json
 
-load_dotenv()
 # take environment variables from .env.
-
-# EtsyFind()
-# print(getCurrency('Mauritius'))
-# EbayFindByID('175811784059')
-'''
-legos = EbayFind('lego')
-for lego in legos:
-    print(lego['title'])
-    print(lego['id'])
-    print(lego['price'])
-    print(lego['image'])
-
-EbayFindByID(legos[0]['id'])
-'''
-# results = EbayFind("lego")
-# EbayFindByKeyword("lego", results)
+load_dotenv()
 
 app = Flask("__name__")
 
@@ -34,15 +18,12 @@ app.jinja_env.filters["formatPrice"] = formatPrice
 # Setting up database in app.py
 db = SQL("sqlite:///webApp.db")
 
-# Configure session to use filesystem (instead of signed cookies)
-# app.config["SESSION_PERMANENT"] = False
-# app.config["SESSION_TYPE"] = "filesystem"
+
 app.config['SECRET_KEY'] = os.getenv('SECRET_KEY')
-# Session(app)
 
 # Used in development so that templates change on the page when their source code is changed
-app.config["TEMPLATES_AUTO_RELOAD"] = True
-app.config["SEND_FILE_MAX_AGE_DEFAULT"] = 0
+# app.config["TEMPLATES_AUTO_RELOAD"] = True
+# app.config["SEND_FILE_MAX_AGE_DEFAULT"] = 0
 
 # Starts background task scheduler, to refresh exchange rates at 8AM and 8PM
 refreshExchangeRates()
@@ -429,7 +410,7 @@ def register():
         
         # Generate hash and insert new user into database
         hash_pw = generate_password_hash(password)
-        db.execute("INSERT INTO users (username, hash) VALUES (?, ?);", username, hash_pw)
+        db.execute("INSERT INTO users (username, hash, record_history) VALUES (?, ?, 1);", username, hash_pw)
 
         return redirect("/")
     
