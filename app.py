@@ -1,6 +1,6 @@
 from flask import Flask, render_template, request, redirect, session, url_for
 from cs50 import SQL
-from helpers import login_required, getCurrency,  EbayFind, getCountry, getLocalCurrency, formatPrice, getCountryByIP, refreshExchangeRates, EbayFindByKeyword
+from helpers import login_required, EbayFind, getLocalCurrency, formatPrice, getCountryByIP, refreshExchangeRates
 from flask_session import Session
 from werkzeug.security import generate_password_hash, check_password_hash
 import os
@@ -223,47 +223,6 @@ def disableHistory():
             db.execute("UPDATE users SET record_history = 1 WHERE id = ?;",session['user_id'])
 
     return render_template('settings.html')
-
-
-@app.route("/add", methods=["POST"])
-@login_required
-def add():
-    
-    # Gets items added to wishlist
-    items = request.get_json()
-    try:
-        items = items["wishlist"]
-
-        # Iterates through all items that need to be added to wishlist
-        for item in items:
-            product = json.loads(item)
-
-            '''A CHECK IN CASE USER TRIES TO ENTER SAME PRODUCT EITHER NOTIFY USER OR INCREASE QUANTITY ?'''
-            row = db.execute("SELECT * FROM users_wishlist WHERE user_id = ? AND link = ? and title = ?"
-                            , session["user_id"]
-                            , product['link']
-                            , product['title']
-                        )
-            
-            # Checks if item is already in wishlist, if yes does not add it
-            if len(row) > 0:
-                print("Already in wishlist")
-                continue
-
-            # Add Item To Wishlist
-            db.execute("INSERT INTO users_wishlist(user_id, title, price, retailer, link, img) VALUES (?, ?, ?, ?, ?, ?);"
-                        ,session["user_id"]
-                        ,product['title']
-                        ,product['price']
-                        ,product['retailer']
-                        ,product['link']
-                        ,product['img']
-                    )
-            
-    except KeyError:
-        print('Invalid Data Added')
-
-    return redirect(url_for("wishlist"))
 
 
 @app.route('/directAdd', methods=['POST'])

@@ -32,6 +32,7 @@ def updateExchangeRates():
 
 
 def refreshExchangeRates():
+    # Starts background task to update exchange rates
     scheduler = BackgroundScheduler()
     scheduler.add_job(updateExchangeRates, 'cron', hour="8,20")
     scheduler.start()
@@ -40,13 +41,18 @@ def refreshExchangeRates():
 
 def getCurrency(country):
 
+    # Check if data.json does not exists, if true call updateExchangeRates to get create it and store new rates
     if not os.path.isfile('data.json'):
         updateExchangeRates()
 
+    # Open exchange rate files and deserialize it
     with open('data.json', 'r') as file:
         data = json.load(file)
 
+    # Call restcountries API to get the currency of the user
     response = requests.get(f'https://restcountries.com/v3.1/name/{country}/')
+
+    # If response is ok, return the rate of the local currency to USD and the currency used
     if response.status_code == 200:
         country_details = response.json()
         currency = list(country_details[0]['currencies'].keys())[0]
@@ -216,70 +222,3 @@ def EbayFind(query):
     # Handles case where could not connect to API
     except ConnectionError:
         return []
-
-
-def EtsyFind():
-    api_key = os.getenv('ETSY_API_KEY')
-    response = requests.get(f'https://openapi.etsy.com/v3/application/listings/active&x-api-key={api_key}&client_id=1')
-    if response.status_code == 200:
-        print(response.json())
-
-    else:
-        print(response)
-        print('not ok')
-
-
-def EbayFindByKeyword(query, results):
-    app_id = os.getenv("EBAY_SB_API_KEY")
-
-    # Makes API Request to EBAY
-    response = requests.get(f"https://svcs.ebay.com/services/search/FindingService/v1?OPERATION-NAME=findItemsByKeywords" \
-            f"&SERVICE-VERSION=1.7.0" \
-            f"&SECURITY-APPNAME={app_id}" \
-            f"&RESPONSE-DATA-FORMAT=JSON" \
-            f"&REST-PAYLOAD"\
-            f"&keywords={query}")
-    
-    if response.status_code == 200:
-        data = response.json()
-        try:
-                #print(data)
-                data = data['findItemsByKeywordsResponse'][0]['searchResult'][0]
-                for item in data['item']:
-                    new = True
-                    for result in results:
-                        if item['viewItemURL'][0] == result['link']:
-                            new = False
-
-                    if new == True:
-                        # Gets the item's information
-                        itemId = item['itemId'][0]
-                        title  = item['title'][0]
-                        title = title.replace('"','')
-                        title = title.replace("'","")
-                        image = item['galleryURL'][0]
-                        item_URL = item['viewItemURL'][0]
-
-                        sellingStatus = item['sellingStatus'][0]
-                        state = sellingStatus['sellingState'][0]
-                        pricing = sellingStatus['currentPrice']
-                        currency = pricing[0]['@currencyId']
-                        price = pricing[0]['__value__']
-
-                        newItem = {
-                            "title" : title,
-                            "id" : itemId,
-                            "image" : image,
-                            "link" : item_URL,
-                            "state" : state,
-                            "currency" : currency,
-                            "price" : price,
-                            "retailer" : 'ebay'
-                        }
-                        results.append(newItem)
-                    print()
-
-                return results
-                
-        except KeyError:
-            print("No key bru")
