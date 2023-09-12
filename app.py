@@ -416,3 +416,8 @@ def register():
     
     else:
         return render_template("register.html")
+    
+@app.route("/termsAndConditions")
+def termsAndConditions():
+    ''' Route for the terms and conditions of the Web App Item Harvest '''
+    return render_template("termsAndConditions.html")
