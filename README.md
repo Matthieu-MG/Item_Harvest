@@ -5,6 +5,31 @@
 Via Item Harvest services, users would be able to create an account and browse for items, then add them to and remove them from their wishlist.
 This Web App was built using the Flask Framework in Python and Sqlite3 as Database and Backend, with CSS and Bootstrap 5, HTML, Javascript and Jquery for the front-end.
 
+##### Setup
+For the web app to work you would need to have:
+
+A .env file containing API keys whose variable names are
+OER_API_KEY - Open Exchange Rates API Key
+To get currency rates for products'price
+
+EBAY_SB_API_KEY - Ebay API Key
+To get items' information when searching for items
+
+OPEN_CAGE_API_KEY - Open Cage API Key
+IPIFY_API_KEY - Ipify API Key
+To acquire user's country to display items' price in local currency
+
+SECRET_KEY
+Used to store user sessions cookies
+
+Then a sqlite3 database named webApp.db which would have tables and fields that follow:
+
+CREATE TABLE users (id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, username TEXT NOT NULL, hash TEXT NOT NULL, record_history INTEGER NOT NULL DEFAULT 1);
+
+CREATE TABLE users_wishlist (id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, user_id INTEGER NOT NULL, title TEXT NOT NULL, price NUMERIC NOT NULL, retailer TEXT NOT NULL, link TEXT NOT NULL, img TEXT NOT NULL, FOREIGN KEY (user_id) REFERENCES users(id));
+
+CREATE TABLE users_history (id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, search TEXT NOT NULL, user_id INTEGER NOT NULL, FOREIGN KEY (user_id) REFERENCES users(id));
+
 ##### Layout of the webpages
 All webpages have navbar at the top of the page, credits on the footer and a button to get back at the top of the page, if the user scrolled down.
 

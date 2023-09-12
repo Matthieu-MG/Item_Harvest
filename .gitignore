@@ -353,3 +353,5 @@ flask_session/
 data.json
 tmp
 2tmp
+
+webApp.db

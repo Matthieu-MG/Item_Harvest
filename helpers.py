@@ -146,7 +146,7 @@ def formatPrice(value):
 def EbayFind(query):
 
     # Gets API KEY
-    app_id = os.getenv("EBAY_SB_API_KEY")
+    app_id = os.getenv("EBAY_API_KEY")
 
     try:
         # Makes API Request to EBAY
