@@ -150,11 +150,11 @@ def EbayFind(query):
 
     try:
         # Makes API Request to EBAY
-        response = requests.get(f"https://svcs.ebay.com/services/search/FindingService/v1?OPERATION-NAME=findItemsAdvanced" \
-                f"&SERVICE-VERSION=1.0.0" \
-                f"&SECURITY-APPNAME={app_id}" \
-                f"&RESPONSE-DATA-FORMAT=JSON" \
-                f"&REST-PAYLOAD" \
+        response = requests.get(f"https://svcs.ebay.com/services/search/FindingService/v1?OPERATION-NAME=findItemsAdvanced"
+                f"&SERVICE-VERSION=1.0.0"
+                f"&SECURITY-APPNAME={app_id}"
+                f"&RESPONSE-DATA-FORMAT=JSON"
+                f"&REST-PAYLOAD"
                 f"&keywords={query}")
         
         # IF Status Code is done

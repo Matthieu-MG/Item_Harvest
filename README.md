@@ -1,5 +1,5 @@
 # Item Harvest
-#### Video Demo:  <URL HERE>
+#### Video Demo:  https://youtu.be/DzYkHGPIZd0
 #### Description:
 ##### Web App Purpose
 Via Item Harvest services, users would be able to create an account and browse for items, then add them to and remove them from their wishlist.
@@ -8,18 +8,18 @@ This Web App was built using the Flask Framework in Python and Sqlite3 as Databa
 ##### Setup
 For the web app to work you would need to have:
 
-A .env file containing API keys whose variable names are
-OER_API_KEY - Open Exchange Rates API Key
+A .env file containing API keys whose variable names are\
+OER_API_KEY - Open Exchange Rates API Key\
 To get currency rates for products'price
 
-EBAY_SB_API_KEY - Ebay API Key
+EBAY_SB_API_KEY - Ebay API Key\
 To get items' information when searching for items
 
-OPEN_CAGE_API_KEY - Open Cage API Key
-IPIFY_API_KEY - Ipify API Key
+OPEN_CAGE_API_KEY - Open Cage API Key\
+IPIFY_API_KEY - Ipify API Key\
 To acquire user's country to display items' price in local currency
 
-SECRET_KEY
+SECRET_KEY\
 Used to store user sessions cookies
 
 Then a sqlite3 database named webApp.db which would have tables and fields that follow:
