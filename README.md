@@ -16,7 +16,7 @@ EBAY_SB_API_KEY - Ebay API Key
 To get items' information when searching for items
 
 OPEN_CAGE_API_KEY - Open Cage API Key
-IPIFY_API_KEY - Ipify API Key
+\IPIFY_API_KEY - Ipify API Key
 To acquire user's country to display items' price in local currency
 
 SECRET_KEY
